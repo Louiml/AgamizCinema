@@ -1,8 +1,8 @@
 <div align="center">
 
-# 🎬 Agamiz Cinema
+# Agamiz Cinema
 
-**A modern, glassmorphic streaming app** — browse movies & TV, search, build a watchlist, and watch together with friends.
+**A streaming app** — browse movies & TV, also you watch together with friends.
 
 Built with React + Vite + TypeScript + Tailwind CSS on the frontend and Rust (Tauri) for a native desktop shell with local persistence.
 
@@ -10,7 +10,7 @@ Built with React + Vite + TypeScript + Tailwind CSS on the frontend and Rust (Ta
 
 ---
 
-## ✨ Features
+## Features
 
 - 🎥 **Browse & Discover** — featured hero carousel, "Now Playing" and "Upcoming" rows sourced from TMDB
 - 🏆 **Top 10** — trending titles ranked and shown in a dedicated row
@@ -23,7 +23,7 @@ Built with React + Vite + TypeScript + Tailwind CSS on the frontend and Rust (Ta
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 | Layer | Language / Framework | Badge |
 |-------|---------------------|-------|
@@ -37,7 +37,7 @@ Built with React + Vite + TypeScript + Tailwind CSS on the frontend and Rust (Ta
 
 ---
 
-## 📦 Requirements
+## Requirements
 
 - **Node.js** 18+ (npm)
 - **Rust** toolchain (rustc **1.77.2+**) with `cargo`
@@ -48,7 +48,7 @@ Built with React + Vite + TypeScript + Tailwind CSS on the frontend and Rust (Ta
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### 1. Install dependencies
 
@@ -97,7 +97,7 @@ npm run release      # bump version + build (patch/minor/major variants availabl
 
 ---
 
-## 🧩 How It Works
+## How It Works
 
 - **Frontend** (`src/`) — React components, hooks, providers, and i18n locales (`en`, `he`, `ru`).
 - **Rust backend** (`src-tauri/`) — Tauri shell providing local persistence, a TMDB proxy, and a media/embed blocker bridge.
@@ -105,7 +105,7 @@ npm run release      # bump version + build (patch/minor/major variants availabl
 
 ---
 
-## 🗂 Project Structure
+## Project Structure
 
 ```
 agamiz-cinema/
@@ -120,8 +120,4 @@ agamiz-cinema/
 
 ---
 
-## 📄 License
-
-Distributed under the **GPL-3.0** license. See `LICENSE` for details.
-
-> **Disclaimer:** This project is for educational/demo purposes. Please respect copyright — the app only surfaces streaming sources and metadata from publicly available providers.
+> **Disclaimer:** This project is for educational purposes. Please respect copyright bro. the app only surfaces streaming sources and metadata from publicly available providers.
