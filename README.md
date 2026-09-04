@@ -43,7 +43,6 @@ Built with React + Vite + TypeScript + Tailwind CSS on the frontend and Rust (Ta
 - **Rust** toolchain (rustc **1.77.2+**) with `cargo`
 - **Tauri 2** prerequisite system tools for your OS — see the [Tauri prerequisites](https://v2.tauri.app/start/prerequisites/):
   - **Windows**: Microsoft C++ Build Tools, WebView2
-  - **macOS**: Xcode Command Line Tools
   - **Linux**: WebKitGTK, libappindicator, librsvg
 
 ---
