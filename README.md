@@ -2,7 +2,7 @@
 
 # Agamiz Cinema
 
-**A streaming app** — browse movies & TV, also you watch together with friends.
+**A streaming app** browse movies & TV, also you watch together with friends.
 
 Built with React + Vite + TypeScript + Tailwind CSS on the frontend and Rust (Tauri) for a native desktop shell with local persistence.
 
