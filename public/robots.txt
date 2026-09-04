@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://cinema.agamiz.com/sitemap.xml
