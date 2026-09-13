@@ -46,9 +46,9 @@ function RouteSeo() {
     case "home":
       return (
         <Helmet>
-          <title>Agamiz Cinema — Watch Movies & TV Shows Online</title>
+          <title>Agamiz Cinema</title>
           <meta name="description" content="Discover trending movies, popular TV series, and watch them instantly on Agamiz Cinema. A cinematic streaming experience — no sign-up required." />
-          <meta property="og:title" content="Agamiz Cinema — Watch Movies & TV Shows Online" />
+          <meta property="og:title" content="Agamiz Cinema - Watch Movies & TV Shows Online" />
           <meta property="og:description" content="Discover trending movies, popular TV series, and watch them instantly on Agamiz Cinema. No sign-up required." />
           <meta property="og:type" content="website" />
           <meta property="og:url" content="https://cinema.agamiz.com/" />
