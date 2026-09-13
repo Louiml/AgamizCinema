@@ -40,13 +40,19 @@ export type VideoSource =
   | "cinesrc"
   | "vidrock";
 
+export type AppTheme = "noir" | "mint" | "rose" | "amber" | "violet" | "azure";
+export type ThemeMode = "dark" | "light";
+
 export interface AppSettings {
   autoplay: boolean;
   defaultSource: VideoSource;
-  glassOpacity: "light" | "medium" | "heavy";
+  glassOpacity: "off" | "light" | "medium" | "heavy";
+  theme: AppTheme;
+  themeMode: ThemeMode;
+  mangaReaderMode: "scroll" | "paged";
+  mangaReadingDirection: "rtl" | "ltr";
   downloadPath: string;
   discordRpc: boolean;
-  showAds: boolean;
   cleanView: boolean;
   autoSkip: boolean;
 }
@@ -54,10 +60,13 @@ export interface AppSettings {
 export const DEFAULT_SETTINGS: AppSettings = {
   autoplay: true,
   defaultSource: "vidsync",
-  glassOpacity: "medium",
+  glassOpacity: "off",
+  theme: "noir",
+  themeMode: "dark",
+  mangaReaderMode: "scroll",
+  mangaReadingDirection: "rtl",
   downloadPath: "",
   discordRpc: true,
-  showAds: true,
   cleanView: false,
   autoSkip: false,
 };

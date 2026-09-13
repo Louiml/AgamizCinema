@@ -3,18 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0a0d0f" />
+    <meta name="theme-color" content="#000000" />
     <meta
       name="description"
-      content="Agamiz Cinema — a sleek, glassmorphic streaming experience. Discover, watch and keep track of the movies and series you love."
+      content="Agamiz Cinema — a cinematic streaming experience. Discover, watch and keep track of the movies and series you love."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="icon" type="image/png" href="/src/logo.png" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link rel="icon" type="image/x-icon" href="/logo.ico" />
+    <link rel="shortcut icon" href="/logo.ico" />
     <title>Agamiz Cinema</title>
     <script type="application/ld+json">
     {
@@ -22,7 +24,7 @@
       "@type": "WebApplication",
       "name": "Agamiz Cinema",
       "url": "https://cinema.agamiz.com",
-      "description": "A sleek, glassmorphic streaming experience. Discover, watch and keep track of the movies and series you love.",
+      "description": "A cinematic streaming experience. Discover, watch and keep track of the movies and series you love.",
       "applicationCategory": "Entertainment",
       "operatingSystem": "All",
       "browserRequirements": "Requires JavaScript",
@@ -35,6 +37,20 @@
     </script>
   </head>
   <body>
+    <script>
+      // Apply saved theme + mode before React mounts to avoid a flash.
+      (function () {
+        try {
+          var raw = localStorage.getItem("agamiz:settings");
+          if (raw) {
+            var s = JSON.parse(raw);
+            if (s.theme) document.documentElement.dataset.theme = s.theme;
+            document.documentElement.dataset.canvas =
+              s.themeMode === "light" ? "cream" : "night";
+          }
+        } catch (e) {}
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

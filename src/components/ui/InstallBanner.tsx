@@ -54,23 +54,23 @@ export function InstallBanner() {
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-ink-deep/70 px-4 backdrop-blur-sm animate-fade-in"
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 px-4 animate-fade-in"
       onClick={handleDismiss}
     >
       <div
-        className="glass-panel w-full max-w-md rounded-3xl p-6 shadow-pop animate-scale-in"
+        className="surface-dark w-full max-w-md rounded-lg p-6 shadow-elev-4 animate-scale-in"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-start gap-3">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-mint-500 text-ink shadow-glow-mint">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-surface-elevated-dark text-on-primary">
               <MonitorDown className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="heading-display text-lg text-paper">
+              <h3 className="heading-display text-lg text-on-primary">
                 {t("install.title")}
               </h3>
-              <p className="mt-1 text-sm leading-relaxed text-ash">
+              <p className="mt-1 text-sm leading-relaxed text-shade-40">
                 {t("install.desc")}
               </p>
             </div>
@@ -84,7 +84,7 @@ export function InstallBanner() {
           <button onClick={handleDismiss} className="btn-glass px-5 py-2.5 text-sm">
             {t("install.later")}
           </button>
-          <button onClick={handleDownload} className="btn-mint px-5 py-2.5 text-sm">
+          <button onClick={handleDownload} className="btn-primary-pill px-5 py-2.5 text-sm">
             <MonitorDown className="h-4 w-4" /> {t("install.install")}
           </button>
         </div>

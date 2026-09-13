@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "Agamiz Cinema",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "identifier": "cinema.agamiz.app",
   "build": {
     "beforeDevCommand": "npm run dev",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [],
     "security": {
-      "csp": "default-src 'self'; connect-src 'self' ipc: http://ipc.localhost https://api.themoviedb.org https://fonts.googleapis.com https://api.aniskip.com https://sponsor.ajay.app wss://0.peerjs.com https://0.peerjs.com; img-src 'self' asset: http://asset.localhost data: blob: https://image.tmdb.org; frame-src https://vidsync.live https://*.vidsync.live https://vidsrc.to https://*.vidsrc.to https://vidsrc.me https://*.vidsrc.me https://vidsrc.net https://*.vidsrc.net https://vidnest.fun https://*.vidnest.fun https://player.videasy.net https://*.videasy.net https://player.videasy.to https://*.videasy.to https://cinesrc.st https://*.cinesrc.st https://vidrock.net https://*.vidrock.net https://www.youtube.com https://*.youtube.com https://www.youtube-nocookie.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self'",
+      "csp": "default-src 'self'; connect-src 'self' ipc: http://ipc.localhost https://api.themoviedb.org https://api.mangadex.org https://fonts.googleapis.com https://api.aniskip.com https://sponsor.ajay.app wss://0.peerjs.com https://0.peerjs.com; img-src 'self' asset: http://asset.localhost data: blob: mdximg: https: ; frame-src https://vidsync.live https://*.vidsync.live https://vidsrc.to https://*.vidsrc.to https://vidsrc.me https://*.vidsrc.me https://vidsrc.net https://*.vidsrc.net https://vidnest.fun https://*.vidnest.fun https://player.videasy.net https://*.videasy.net https://player.videasy.to https://*.videasy.to https://cinesrc.st https://*.cinesrc.st https://vidrock.net https://*.vidrock.net https://www.youtube.com https://*.youtube.com https://www.youtube-nocookie.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self'",
       "devCsp": null
     }
   },

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { SlidersHorizontal, X, Check, RotateCcw } from "lucide-react";
+import { SlidersHorizontal, X, Check, RotateCcw, Calendar, Star } from "lucide-react";
 import type { Genre } from "@/types/tmdb";
 
 export interface SortOption<T extends string> {
@@ -19,14 +19,22 @@ interface FilterSheetProps<T extends string> {
   sort: T;
   onSelectSort: (key: T) => void;
   sortOptions: Array<{ key: T; label: string }>;
+  yearFrom: number | undefined;
+  yearTo: number | undefined;
+  onYearChange: (from: number | undefined, to: number | undefined) => void;
+  minRating: number;
+  onSelectRating: (rating: number) => void;
   onReset: () => void;
   activeCount: number;
 }
 
+const RATING_STEPS = [0, 5, 6, 7, 8];
+
+const CURRENT_YEAR = new Date().getFullYear();
+
 /**
- * Glassmorphism bottom-sheet drawer for filtering & sorting on mobile. Slides
- * up from the bottom with a grab handle, header actions and scrolled content.
- * Replaces the inline desktop filter row on small screens.
+ * Unified filter panel. Bottom sheet on mobile, right-side drawer on desktop.
+ * Sections: Sort, Genres, Release Year, Minimum Rating.
  */
 export function FilterSheet<T extends string>({
   open,
@@ -38,10 +46,16 @@ export function FilterSheet<T extends string>({
   sort,
   onSelectSort,
   sortOptions,
+  yearFrom,
+  yearTo,
+  onYearChange,
+  minRating,
+  onSelectRating,
   onReset,
   activeCount,
 }: FilterSheetProps<T>) {
   const { t } = useTranslation();
+
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
@@ -62,47 +76,45 @@ export function FilterSheet<T extends string>({
 
   if (!open) return null;
 
+  const clearGenres = () => selectedGenres.forEach((g) => onToggleGenre(g));
+
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-end justify-center bg-ink-deep/70 backdrop-blur-sm animate-fade-in md:hidden"
+      className="fixed inset-0 z-[60] flex items-end justify-center animate-fade-in md:top-14 md:items-stretch md:justify-end"
       onClick={onClose}
     >
+      <div className="absolute inset-0 bg-black/70" aria-hidden />
       <div
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="relative flex max-h-[82vh] w-full flex-col rounded-t-3xl border-t border-x border-white/[0.08] bg-ink-deep/85 backdrop-blur-2xl shadow-[0_-20px_60px_-20px_rgba(0,0,0,0.85),inset_0_1px_0_0_rgba(255,255,255,0.08)] animate-fade-in-up"
+        className="relative flex max-h-[88vh] w-full flex-col rounded-t-lg border-t border-hairline-light bg-canvas-night-elevated shadow-elev-4 animate-fade-in-up md:h-full md:max-h-none md:max-w-md md:rounded-none md:border-t-0 md:border-l"
         onClick={(e) => e.stopPropagation()}
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
-        {/* Grab handle */}
-        <div className="mx-auto mt-3 h-1.5 w-12 shrink-0 rounded-full bg-white/20" />
+        {/* Grab handle (mobile only) */}
+        <div className="mx-auto mt-3 h-1.5 w-12 shrink-0 rounded-pill bg-white/20 md:hidden" />
 
         {/* Header */}
-        <div className="flex items-center justify-between gap-3 px-5 pb-3 pt-4">
-          <h2 className="flex items-center gap-2 heading-display text-lg text-paper">
-            <SlidersHorizontal className="h-5 w-5 text-mint-400" />
+        <div className="flex items-center justify-between gap-3 border-b border-hairline-light px-5 pb-3 pt-4">
+          <h2 className="flex items-center gap-2 heading-display text-lg text-on-primary">
+            <SlidersHorizontal className="h-5 w-5 text-on-primary" />
             {title}
             {activeCount > 0 && (
-              <span className="glass-mint flex h-6 min-w-6 items-center justify-center rounded-full px-2 text-xs font-bold text-mint-300">
-                {activeCount}
-              </span>
+              <span className="pill-tag-shade-dark">{activeCount}</span>
             )}
           </h2>
           <div className="flex items-center gap-2">
             <button
-              onClick={() => {
-                onReset();
-                onClose();
-              }}
-              className="glass-panel flex h-10 items-center gap-1.5 rounded-xl px-3 text-xs font-medium text-ash transition-all duration-ui ease-spring active:scale-95 hover:text-mint-300"
+              onClick={onReset}
+              className="surface-dark flex h-10 items-center gap-1.5 rounded-pill px-3 text-xs font-medium text-shade-40 transition-all duration-ui ease-spring active:scale-95 hover:text-on-primary"
             >
               <RotateCcw className="h-3.5 w-3.5" /> {t("discover.reset")}
             </button>
             <button
               onClick={onClose}
-              aria-label="Close filters"
-              className="glass-panel flex h-10 w-10 items-center justify-center rounded-xl text-paper transition-all duration-ui ease-spring active:scale-90 active:duration-press hover:border-mint-500/30 hover:text-mint-300"
+              aria-label={t("common.close")}
+              className="surface-dark flex h-10 w-10 items-center justify-center rounded-pill text-on-primary transition-all duration-ui ease-spring active:scale-90 active:duration-press hover:border-white/[0.16]"
             >
               <X className="h-5 w-5" />
             </button>
@@ -110,19 +122,45 @@ export function FilterSheet<T extends string>({
         </div>
 
         {/* Scrollable body */}
-        <div className="min-h-0 flex-1 overflow-y-auto pb-6">
+        <div className="min-h-0 flex-1 overflow-y-auto px-5 pb-6 pt-4">
+          {/* Sort */}
+          <p className="eyebrow">{t("discover.sortBy")}</p>
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            {sortOptions.map((opt) => {
+              const active = sort === opt.key;
+              return (
+                <button
+                  key={opt.key}
+                  onClick={() => onSelectSort(opt.key)}
+                  className={`flex items-center justify-between rounded-md border px-3 py-2.5 text-sm font-medium transition-all duration-ui ease-spring active:scale-[0.98] ${
+                    active
+                      ? "border-accent bg-accent/10 text-on-primary"
+                      : "surface-dark text-shade-40 hover:text-on-primary"
+                  }`}
+                >
+                  <span className="truncate">{opt.label}</span>
+                  {active && (
+                    <Check className="h-4 w-4 shrink-0 text-accent" strokeWidth={3} />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
           {/* Genres */}
-          <div className="px-5 pt-2">
-            <p className="text-xs font-semibold uppercase tracking-widest text-ash">
-              {t("discover.genres")}
-            </p>
+          <div className="mt-6">
+            <div className="flex items-center justify-between">
+              <p className="eyebrow">{t("discover.genres")}</p>
+              {selectedGenres.length > 0 && (
+                <button
+                  onClick={clearGenres}
+                  className="text-xs text-shade-50 transition-colors hover:text-on-primary"
+                >
+                  {t("discover.clearGenres")}
+                </button>
+              )}
+            </div>
             <div className="mt-3 flex flex-wrap gap-2">
-              <button
-                onClick={() => selectedGenres.forEach((g) => onToggleGenre(g))}
-                className={`chip ${selectedGenres.length === 0 ? "chip-active" : ""}`}
-              >
-                {t("discover.all")}
-              </button>
               {genres.map((g) => {
                 const active = selectedGenres.includes(g.id);
                 return (
@@ -139,30 +177,57 @@ export function FilterSheet<T extends string>({
             </div>
           </div>
 
-          {/* Sort */}
-          <div className="mt-6 px-5">
-            <p className="text-xs font-semibold uppercase tracking-widest text-ash">
-              {t("discover.sortBy")}
+          {/* Release year */}
+          <div className="mt-6">
+            <p className="eyebrow flex items-center gap-1.5">
+              <Calendar className="h-3.5 w-3.5" /> {t("discover.releaseYear")}
             </p>
-            <div className="mt-3 space-y-1.5">
-              {sortOptions.map((opt) => {
-                const active = sort === opt.key;
+            <div className="mt-3 flex items-center gap-3">
+              <input
+                type="number"
+                inputMode="numeric"
+                min={1900}
+                max={CURRENT_YEAR}
+                value={yearFrom ?? ""}
+                placeholder={t("discover.yearFrom")}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  onYearChange(v ? Number(v) : undefined, yearTo);
+                }}
+                className="input-glass w-full"
+              />
+              <span className="shrink-0 text-shade-50">—</span>
+              <input
+                type="number"
+                inputMode="numeric"
+                min={1900}
+                max={CURRENT_YEAR}
+                value={yearTo ?? ""}
+                placeholder={t("discover.yearTo")}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  onYearChange(yearFrom, v ? Number(v) : undefined);
+                }}
+                className="input-glass w-full"
+              />
+            </div>
+          </div>
+
+          {/* Min rating */}
+          <div className="mt-6">
+            <p className="eyebrow flex items-center gap-1.5">
+              <Star className="h-3.5 w-3.5" /> {t("discover.minRating")}
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {RATING_STEPS.map((step) => {
+                const active = minRating === step;
                 return (
                   <button
-                    key={opt.key}
-                    onClick={() => onSelectSort(opt.key)}
-                    className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-sm font-medium transition-all duration-ui ease-spring active:scale-[0.98] ${
-                      active
-                        ? "border-mint-500/40 bg-mint-500/10 text-mint-300"
-                        : "border-white/[0.08] bg-white/[0.03] text-paper hover:bg-white/[0.06]"
-                    }`}
+                    key={step}
+                    onClick={() => onSelectRating(step)}
+                    className={`chip ${active ? "chip-active" : ""}`}
                   >
-                    <span>{opt.label}</span>
-                    {active && (
-                      <span className="flex h-5 w-5 items-center justify-center rounded-full bg-mint-500 text-ink">
-                        <Check className="h-3 w-3" strokeWidth={3} />
-                      </span>
-                    )}
+                    {step === 0 ? t("discover.any") : `${step}+`}
                   </button>
                 );
               })}
@@ -170,11 +235,11 @@ export function FilterSheet<T extends string>({
           </div>
         </div>
 
-        {/* Apply */}
-        <div className="border-t border-white/[0.06] px-5 py-4">
+        {/* Footer */}
+        <div className="border-t border-hairline-light px-5 py-4">
           <button
             onClick={onClose}
-            className="btn-mint w-full py-3.5 text-base"
+            className="btn-primary-pill w-full py-3.5 text-base"
           >
             {t("discover.applyFilters")}
           </button>

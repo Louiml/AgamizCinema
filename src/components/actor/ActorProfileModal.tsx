@@ -95,37 +95,37 @@ export function ActorProfileModal({ person, onClose }: ActorProfileModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-[65] flex items-center justify-center bg-ink-deep/85 px-4 py-6 backdrop-blur-md animate-fade-in"
+      className="fixed inset-0 z-[65] flex items-center justify-center bg-black/85 px-4 py-6 animate-fade-in"
       onClick={onClose}
     >
       <div
-        className="glass-panel relative flex max-h-[88vh] w-full max-w-3xl flex-col overflow-hidden rounded-3xl shadow-pop animate-scale-in"
+        className="surface-dark relative flex max-h-[88vh] w-full max-w-3xl flex-col overflow-hidden rounded-lg shadow-elev-4 animate-scale-in"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close */}
         <button
           onClick={onClose}
           aria-label={t("common.close")}
-          className="btn-icon absolute end-3 top-3 z-10 h-9 w-9 bg-ink-deep/50"
+          className="btn-icon absolute end-3 top-3 z-10 h-9 w-9 bg-black/40"
         >
           <X className="h-4 w-4" />
         </button>
 
         {loading ? (
           <div className="flex flex-col items-center justify-center gap-3 py-24">
-            <Loader2 className="h-10 w-10 animate-spin-slow text-mint-400" />
-            <p className="text-sm text-ash">{t("actor.loading")}</p>
+            <Loader2 className="h-10 w-10 animate-spin-slow text-on-primary" />
+            <p className="text-sm text-shade-40">{t("actor.loading")}</p>
           </div>
         ) : error ? (
           <div className="flex flex-col items-center justify-center gap-3 py-24 text-center">
-            <User className="h-10 w-10 text-mint-500/40" />
-            <p className="max-w-sm text-sm text-ash">{error}</p>
+            <User className="h-10 w-10 text-shade-70" />
+            <p className="max-w-sm text-sm text-shade-40">{error}</p>
           </div>
         ) : data ? (
           <>
             {/* Header */}
             <div className="flex shrink-0 items-start gap-4 border-b border-white/[0.08] p-5 sm:p-6">
-              <div className="relative h-28 w-20 shrink-0 overflow-hidden rounded-xl bg-white/[0.04] sm:h-36 sm:w-24">
+              <div className="relative h-28 w-20 shrink-0 overflow-hidden rounded-md bg-white/[0.04] sm:h-36 sm:w-24">
                 {data.profile_path ? (
                   <img
                     src={posterUrl(data.profile_path, "w342") ?? undefined}
@@ -133,31 +133,31 @@ export function ActorProfileModal({ person, onClose }: ActorProfileModalProps) {
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <div className="flex h-full items-center justify-center text-mist/40">
+                  <div className="flex h-full items-center justify-center text-shade-70">
                     <User className="h-8 w-8" />
                   </div>
                 )}
               </div>
               <div className="min-w-0 pt-1">
-                <h2 className="heading-display text-xl text-paper sm:text-2xl">
+                <h2 className="heading-display text-xl text-on-primary sm:text-2xl">
                   {data.name}
                 </h2>
-                <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-ash">
+                <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-shade-40">
                   {data.known_for_department && (
                     <span className="flex items-center gap-1">
-                      <Briefcase className="h-3.5 w-3.5 text-mint-400" />
+                      <Briefcase className="h-3.5 w-3.5 text-on-primary" />
                       {data.known_for_department}
                     </span>
                   )}
                   {data.birthday && (
                     <span className="flex items-center gap-1">
-                      <Calendar className="h-3.5 w-3.5 text-mint-400" />
+                      <Calendar className="h-3.5 w-3.5 text-on-primary" />
                       {t("actor.born", { date: formatDate(data.birthday) })}
                     </span>
                   )}
                   {data.place_of_birth && (
                     <span className="flex items-center gap-1">
-                      <MapPin className="h-3.5 w-3.5 text-mint-400" />
+                      <MapPin className="h-3.5 w-3.5 text-on-primary" />
                       {data.place_of_birth}
                     </span>
                   )}
@@ -169,21 +169,21 @@ export function ActorProfileModal({ person, onClose }: ActorProfileModalProps) {
             <div className="flex-1 overflow-y-auto p-5 sm:p-6">
               {data.biography ? (
                 <div>
-                  <h3 className="mb-1.5 text-sm font-semibold uppercase tracking-widest text-ash">
+                  <h3 className="eyebrow mb-1.5">
                     {t("actor.biography")}
                   </h3>
-                  <p className="text-sm leading-relaxed text-paper/80 [display:-webkit-box] [-webkit-line-clamp:6] [-webkit-box-orient:vertical] overflow-hidden">
+                  <p className="text-sm leading-relaxed text-on-primary/80 [display:-webkit-box] [-webkit-line-clamp:6] [-webkit-box-orient:vertical] overflow-hidden">
                     {data.biography}
                   </p>
                 </div>
               ) : (
-                <p className="text-sm text-ash">{t("actor.noBio")}</p>
+                <p className="text-sm text-shade-40">{t("actor.noBio")}</p>
               )}
 
               {/* Filmography */}
               {filmography.length > 0 && (
                 <div className="mt-6">
-                  <h3 className="mb-3 text-sm font-semibold uppercase tracking-widest text-ash">
+                  <h3 className="eyebrow mb-3">
                     {t("actor.topFilmography")}
                   </h3>
                   <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
@@ -196,7 +196,7 @@ export function ActorProfileModal({ person, onClose }: ActorProfileModalProps) {
                         <button
                           key={`${c.media_type}:${c.id}`}
                           onClick={() => handleSelect(c)}
-                          className="group flex flex-col items-start overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.03] text-left transition-all duration-ui ease-spring hover:border-mint-500/30 hover:bg-white/[0.06]"
+                          className="group flex flex-col items-start overflow-hidden rounded-md border border-white/[0.08] bg-canvas-night-elevated text-left transition-all duration-ui ease-spring hover:border-white/[0.16] hover:bg-white/[0.06]"
                         >
                           <div className="relative aspect-[2/3] w-full overflow-hidden bg-white/[0.04]">
                             {c.poster_path ? (
@@ -207,16 +207,16 @@ export function ActorProfileModal({ person, onClose }: ActorProfileModalProps) {
                                 className="h-full w-full object-cover transition-transform duration-surface ease-spring group-hover:scale-105"
                               />
                             ) : (
-                              <div className="flex h-full items-center justify-center text-ash-dim">
+                              <div className="flex h-full items-center justify-center text-shade-50">
                                 <Play className="h-6 w-6" />
                               </div>
                             )}
-                            <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-ink/70 to-transparent" />
+                            <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-canvas-night/70 to-transparent" />
                             <div className="absolute bottom-2 start-2 end-2">
-                              <p className="line-clamp-2 text-xs font-semibold text-white drop-shadow">
+                              <p className="line-clamp-2 text-xs font-medium text-on-primary">
                                 {title}
                               </p>
-                              <p className="mt-0.5 text-[10px] text-white/70">
+                              <p className="mt-0.5 text-[10px] text-on-primary/70">
                                 {c.media_type === "tv"
                                   ? t("common.tvSeries")
                                   : t("common.movie")}
@@ -225,7 +225,7 @@ export function ActorProfileModal({ person, onClose }: ActorProfileModalProps) {
                             </div>
                           </div>
                           <div className="flex w-full items-center justify-between gap-2 px-2.5 py-2">
-                            <span className="truncate text-[11px] text-ash">{c.role}</span>
+                            <span className="truncate text-[11px] text-shade-40">{c.role}</span>
                             <RatingBadge rating={c.vote_average ?? 0} size="sm" />
                           </div>
                         </button>

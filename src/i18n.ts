@@ -3,16 +3,24 @@ import { initReactI18next } from "react-i18next";
 import en from "./locales/en.json";
 import he from "./locales/he.json";
 import ru from "./locales/ru.json";
+import de from "./locales/de.json";
+import ar from "./locales/ar.json";
+import it from "./locales/it.json";
+import ja from "./locales/ja.json";
 
-export type AppLanguage = "en" | "he" | "ru";
+export type AppLanguage = "en" | "he" | "ru" | "de" | "ar" | "it" | "ja";
 
 const LANG_KEY = "agamiz:language";
-const SUPPORTED: AppLanguage[] = ["en", "he", "ru"];
+const SUPPORTED: AppLanguage[] = ["en", "he", "ru", "de", "ar", "it", "ja"];
 
 const DIRS: Record<AppLanguage, "ltr" | "rtl"> = {
   en: "ltr",
   he: "rtl",
   ru: "ltr",
+  de: "ltr",
+  ar: "rtl",
+  it: "ltr",
+  ja: "ltr",
 };
 
 function isSupported(value: string | null): value is AppLanguage {
@@ -25,6 +33,14 @@ export function tmdbLanguageFor(lang: string): string {
       return "he-IL";
     case "ru":
       return "ru-RU";
+    case "de":
+      return "de-DE";
+    case "ar":
+      return "ar-SA";
+    case "it":
+      return "it-IT";
+    case "ja":
+      return "ja-JP";
     default:
       return "en-US";
   }
@@ -72,6 +88,10 @@ void i18n
       en: { translation: en },
       he: { translation: he },
       ru: { translation: ru },
+      de: { translation: de },
+      ar: { translation: ar },
+      it: { translation: it },
+      ja: { translation: ja },
     },
     lng: getInitialLanguage(),
     fallbackLng: "en",

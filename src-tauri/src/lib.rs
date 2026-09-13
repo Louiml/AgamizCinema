@@ -54,6 +54,73 @@ async fn tmdb_proxy(url: String, api_key: String) -> Result<ProxyResponse, Strin
     }
 }
 
+const MANGA_UA: &str = "AgamizCinema/1.0.1 (https://cinema.agamiz.com)";
+
+/// Proxy for the MangaDex API (api.mangadex.org sends no CORS headers, so the
+/// browser can't call it directly). Returns JSON.
+#[tauri::command]
+async fn manga_proxy(url: String) -> Result<ProxyResponse, String> {
+    let client = reqwest::Client::builder()
+        .user_agent(MANGA_UA)
+        .build()
+        .map_err(|e| format!("client build failed: {e}"))?;
+    let response = client
+        .get(&url)
+        .header("accept", "application/json")
+        .send()
+        .await
+        .map_err(|e| format!("proxy request failed: {e}"))?;
+    let status = response.status().as_u16();
+    if (200..300).contains(&status) {
+        let data: Value = response.json().await.map_err(|e| format!("bad json: {e}"))?;
+        Ok(ProxyResponse {
+            ok: true,
+            status: Some(status),
+            data: Some(data),
+        })
+    } else {
+        Ok(ProxyResponse {
+            ok: false,
+            status: Some(status),
+            data: None,
+        })
+    }
+}
+
+fn percent_decode_query(s: &str) -> String {
+    percent_decode(s)
+}
+
+fn query_param(query: &str, key: &str) -> Option<String> {
+    for pair in query.split('&') {
+        let mut it = pair.splitn(2, '=');
+        let k = it.next()?;
+        if k == key {
+            return it.next().map(|v| percent_decode_query(v));
+        }
+    }
+    None
+}
+
+/// Resolves a `mdximg://` request to the upstream MangaDex image URL.
+///   mdximg://covers/{mangaId}/{file} -> uploads.mangadex.org/covers/{mangaId}/{file}
+///   mdximg://page?base=...&hash=...&file=...&ds=0 -> {base}/data[-saver]/{hash}/{file}
+fn resolve_mdimg_target(uri: &str) -> Option<String> {
+    let rest = uri.strip_prefix("mdximg://")?;
+    if let Some(query) = rest.strip_prefix("page?") {
+        let base = query_param(query, "base")?;
+        let hash = query_param(query, "hash")?;
+        let file = query_param(query, "file")?;
+        let ds = query_param(query, "ds").unwrap_or_else(|| "0".into());
+        let seg = if ds == "1" { "data-saver" } else { "data" };
+        Some(format!("{base}/{seg}/{hash}/{file}"))
+    } else if let Some(path) = rest.strip_prefix("covers/") {
+        Some(format!("https://uploads.mangadex.org/covers/{path}"))
+    } else {
+        None
+    }
+}
+
 #[tauri::command]
 fn __agamiz_backend(
     app: tauri::AppHandle,
@@ -373,21 +440,15 @@ fn open_in_file_manager(path: &Path) -> Result<(), String> {
 #[tauri::command]
 fn open_download_window(
     app: AppHandle,
-    tmdb_id: u64,
-    media_type: String,
+    url: String,
     title: String,
     season: Option<u32>,
     episode: Option<u32>,
 ) -> Result<String, String> {
-    let is_tv = media_type == "tv";
     let s = season.unwrap_or(1);
     let e = episode.unwrap_or(1);
-    let url = if is_tv {
-        format!("https://vidsync.live/embed/tv/{tmdb_id}/{s}/{e}")
-    } else {
-        format!("https://vidsync.live/embed/movie/{tmdb_id}")
-    };
-    let label = format!("download-{media_type}-{tmdb_id}-{s}-{e}");
+    let is_tv = season.is_some();
+    let label = format!("download-{}", sanitize_filename(&title));
 
     if let Some(existing) = app.get_webview_window(&label) {
         let _ = existing.set_focus();
@@ -398,9 +459,9 @@ fn open_download_window(
         .parse::<tauri::Url>()
         .map_err(|e| format!("invalid url: {e}"))?;
     let win_title = if is_tv {
-        format!("Download — {title} S{s}E{e}")
+        format!("Download - {title} S{s}E{e}")
     } else {
-        format!("Download — {title}")
+        format!("Download - {title}")
     };
 
     let download_builder =
@@ -424,6 +485,59 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
+        .register_asynchronous_uri_scheme_protocol("mdximg", |_app, request, responder| {
+            let uri = request.uri().to_string();
+            tauri::async_runtime::spawn(async move {
+                let Some(target) = resolve_mdimg_target(&uri) else {
+                    responder.respond(
+                        tauri::http::Response::builder()
+                            .status(400)
+                            .body(Vec::new())
+                            .unwrap(),
+                    );
+                    return;
+                };
+                let client = match reqwest::Client::builder().user_agent(MANGA_UA).build() {
+                    Ok(c) => c,
+                    Err(_) => {
+                        responder.respond(
+                            tauri::http::Response::builder()
+                                .status(502)
+                                .body(Vec::new())
+                                .unwrap(),
+                        );
+                        return;
+                    }
+                };
+                let resp = match client.get(&target).send().await {
+                    Ok(r) => r,
+                    Err(_) => {
+                        responder.respond(
+                            tauri::http::Response::builder()
+                                .status(502)
+                                .body(Vec::new())
+                                .unwrap(),
+                        );
+                        return;
+                    }
+                };
+                let ct = resp
+                    .headers()
+                    .get("content-type")
+                    .and_then(|v| v.to_str().ok())
+                    .unwrap_or("image/*")
+                    .to_string();
+                let bytes = resp.bytes().await.unwrap_or_default();
+                responder.respond(
+                    tauri::http::Response::builder()
+                        .status(200)
+                        .header("content-type", ct)
+                        .header("access-control-allow-origin", "*")
+                        .body(bytes.to_vec())
+                        .unwrap(),
+                );
+            });
+        })
         .manage(DownloadState(Mutex::new(None)))
         .setup(|app| {
             let handle = app.handle();
@@ -451,6 +565,7 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             tmdb_proxy,
+            manga_proxy,
             __agamiz_backend,
             system_info,
             set_download_path,

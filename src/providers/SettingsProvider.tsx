@@ -69,3 +69,8 @@ export function useSettings(): SettingsContextValue {
   }
   return ctx;
 }
+
+/** Whether the app is currently in light mode (global Light/Dark setting). */
+export function useIsLight(): boolean {
+  return useSettings().settings.themeMode === "light";
+}

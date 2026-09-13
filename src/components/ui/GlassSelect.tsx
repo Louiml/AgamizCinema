@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "re
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { Check, ChevronDown, type LucideIcon } from "lucide-react";
+import { useIsLight } from "@/providers/SettingsProvider";
 
 export interface GlassSelectOption<T extends string | number = string | number> {
   value: T;
@@ -24,12 +25,6 @@ interface GlassSelectProps<T extends string | number> {
 
 const GAP = 6;
 
-/**
- * Custom glassmorphic dropdown. Replaces the native <select> everywhere so the
- * trigger and the option list both follow the app's design language. The menu
- * is portaled to <body>, keeps the trigger's width, flips upward when there's
- * no room below, and supports full keyboard navigation.
- */
 export function GlassSelect<T extends string | number>({
   value,
   onChange,
@@ -43,6 +38,7 @@ export function GlassSelect<T extends string | number>({
   className = "",
 }: GlassSelectProps<T>) {
   const { t } = useTranslation();
+  const isLight = useIsLight();
   const effectivePlaceholder = placeholder ?? t("common.select");
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -170,18 +166,24 @@ export function GlassSelect<T extends string | number>({
             openMenu();
           }
         }}
-        className={`glass-panel inline-flex cursor-pointer items-center gap-2 rounded-2xl text-sm text-paper transition-all duration-ui ease-spring focus:outline-none focus:border-mint-500/40 focus:shadow-glow-soft disabled:cursor-not-allowed disabled:opacity-50 ${
-          compact ? "px-3.5 py-1.5" : "px-4 py-2.5"
-        } ${open ? "border-mint-500/40" : ""} ${className}`}
+        className={`inline-flex cursor-pointer items-center gap-2 rounded-md text-sm transition-all duration-ui ease-spring focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
+          isLight
+            ? "border border-hairline-light bg-canvas-light text-ink focus:border-ink"
+            : "surface-dark text-on-primary focus:border-on-primary/40"
+        } ${compact ? "px-3.5 py-1.5" : "px-4 py-2.5"} ${
+          open ? (isLight ? "border-ink" : "border-on-primary/40") : ""
+        } ${className}`}
       >
         {LeadingIcon && (
-          <LeadingIcon className="h-4 w-4 shrink-0 text-mint-400" />
+          <LeadingIcon className={`h-4 w-4 shrink-0 ${isLight ? "text-ink" : "text-on-primary"}`} />
         )}
         <span className="max-w-[220px] truncate">
           {selectedOption ? selectedOption.label : effectivePlaceholder}
         </span>
         <Trailing
-          className={`h-4 w-4 shrink-0 text-ash transition-transform duration-ui ${open ? "rotate-180" : ""}`}
+          className={`h-4 w-4 shrink-0 transition-transform duration-ui ${open ? "rotate-180" : ""} ${
+            isLight ? "text-shade-50" : "text-shade-40"
+          }`}
         />
       </button>
 
@@ -195,10 +197,14 @@ export function GlassSelect<T extends string | number>({
               top: pos?.top ?? 0,
               minWidth: pos?.minWidth,
             }}
-            className="glass-panel fixed z-[95] w-max max-w-[80vw] origin-top-left animate-scale-in rounded-2xl p-1.5 shadow-pop"
+            className={`fixed z-[95] w-max max-w-[80vw] origin-top-left animate-scale-in rounded-md p-1.5 shadow-elev-4 ${
+              isLight ? "surface-light" : "surface-dark"
+            }`}
           >
             {options.length === 0 ? (
-              <div className="px-3 py-2 text-sm text-ash-dim">{effectivePlaceholder}</div>
+              <div className={`px-3 py-2 text-sm ${isLight ? "text-shade-50" : "text-shade-50"}`}>
+                {effectivePlaceholder}
+              </div>
             ) : (
               options.map((opt, i) => (
                 <button
@@ -209,17 +215,21 @@ export function GlassSelect<T extends string | number>({
                   disabled={opt.disabled}
                   onMouseEnter={() => !opt.disabled && setHighlight(i)}
                   onClick={() => selectOption(opt)}
-                  className={`flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-left text-sm transition-colors duration-150 ${
+                  className={`flex w-full items-center justify-between gap-3 rounded-xs px-3 py-2 text-left text-sm transition-colors duration-150 ${
                     opt.disabled
-                      ? "cursor-not-allowed text-ash-dim"
+                      ? "cursor-not-allowed text-shade-50"
                       : i === highlight
-                        ? "bg-white/10 text-paper"
-                        : "text-ash hover:bg-white/5 hover:text-paper"
+                        ? isLight
+                          ? "bg-shade-30 text-ink"
+                          : "bg-white/10 text-on-primary"
+                        : isLight
+                          ? "text-shade-60 hover:bg-shade-30/60 hover:text-ink"
+                          : "text-shade-40 hover:bg-white/5 hover:text-on-primary"
                   }`}
                 >
                   <span className="truncate">{opt.label}</span>
                   {opt.value === value && (
-                    <Check className="h-4 w-4 shrink-0 text-mint-400" />
+                    <Check className={`h-4 w-4 shrink-0 ${isLight ? "text-ink" : "text-on-primary"}`} />
                   )}
                 </button>
               ))

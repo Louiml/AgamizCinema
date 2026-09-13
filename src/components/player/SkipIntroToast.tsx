@@ -41,7 +41,7 @@ export function SkipIntroToast({ segment, onSkip, autoHideMs = 8000 }: SkipIntro
         setDismissed(true);
         onSkip();
       }}
-      className="absolute bottom-6 end-6 z-20 flex items-center gap-2 rounded-full bg-mint-500 px-4 py-2 text-sm font-semibold text-ink shadow-lg shadow-black/40 transition-transform duration-ui ease-spring hover:scale-105 active:scale-95 active:duration-press focus:outline-none focus:ring-2 focus:ring-mint-300"
+      className="absolute bottom-6 end-6 z-20 flex items-center gap-2 rounded-pill bg-accent px-4 py-2 text-sm font-medium text-accent-on shadow-elev-4 transition-transform duration-ui ease-spring hover:scale-105 active:scale-95 active:duration-press focus:outline-none focus:ring-2 focus:ring-accent/50"
     >
       <SkipForward className="h-4 w-4" />
       {t("skip.action", { kind: label })}

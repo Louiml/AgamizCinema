@@ -5,6 +5,7 @@ import { HistoryProvider } from "./HistoryProvider";
 import { SettingsProvider } from "./SettingsProvider";
 import { PlayerProvider } from "./TMDBProvider";
 import { DetailsProvider } from "./DetailsProvider";
+import { MangaLibraryProvider } from "./MangaLibraryProvider";
 
 export function AppProviders({ children }: { children: ReactNode }) {
   return (
@@ -12,9 +13,11 @@ export function AppProviders({ children }: { children: ReactNode }) {
       <SettingsProvider>
         <WatchlistProvider>
           <HistoryProvider>
-            <PlayerProvider>
-              <DetailsProvider>{children}</DetailsProvider>
-            </PlayerProvider>
+            <MangaLibraryProvider>
+              <PlayerProvider>
+                <DetailsProvider>{children}</DetailsProvider>
+              </PlayerProvider>
+            </MangaLibraryProvider>
           </HistoryProvider>
         </WatchlistProvider>
       </SettingsProvider>

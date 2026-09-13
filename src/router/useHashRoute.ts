@@ -29,6 +29,14 @@ function parseHash(): ParsedHash {
   return { route, roomParam };
 }
 
+export type Canvas = "night" | "cream";
+
+/** DESIGN.md two-canvas mapping. Cinematic pages (home/discover) sit on
+ *  pure black; transactional pages (watchlist/settings) flip to cream. */
+export function canvasFor(route: Route): Canvas {
+  return route === "watchlist" || route === "settings" ? "cream" : "night";
+}
+
 /** Reads the watch-together room id from the current URL, if any. */
 function readRoomParam(): string | null {
   return parseHash().roomParam;

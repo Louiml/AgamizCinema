@@ -17,12 +17,13 @@ import { SearchModal } from "@/components/search/SearchModal";
 import { LanguageSelector } from "@/components/ui/LanguageSelector";
 import { isTauri } from "@/services/tauri";
 import { ExternalLinks } from "@/components/ui/ExternalLinks";
-import type { Route } from "@/router/useHashRoute";
-import logoUrl from "@/logo.png";
+import type { Route, Canvas } from "@/router/useHashRoute";
+import { Logo } from "@/components/ui/Logo";
 
 interface TitleBarProps {
   route: Route;
   navigate: (r: Route) => void;
+  canvas: Canvas;
 }
 
 const NAV_ITEMS: Array<{ id: Route; labelKey: string; icon: typeof Home }> = [
@@ -104,13 +105,14 @@ function useScrolled() {
   return scrolled;
 }
 
-export function TitleBar({ route, navigate }: TitleBarProps) {
+export function TitleBar({ route, navigate, canvas }: TitleBarProps) {
   const { t } = useTranslation();
   const { count } = useWatchlist();
   const isMobile = useIsMobile();
   const [searchOpen, setSearchOpen] = useState(false);
   const windowCtl = useWindowControls();
   const scrolled = useScrolled();
+  const isLight = canvas === "cream";
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -146,9 +148,12 @@ export function TitleBar({ route, navigate }: TitleBarProps) {
     <>
       <header
         data-tauri-drag-region
-        className={`glass-chrome sticky top-0 z-40 select-none transition-shadow duration-ui ${
-          scrolled ? "shadow-[0_12px_32px_-16px_rgba(0,0,0,0.8)]" : ""
-        }`}
+        onContextMenu={(e) => e.preventDefault()}
+        className={`sticky top-0 z-40 select-none transition-shadow duration-ui ${
+          isLight
+            ? "border-b border-hairline-light bg-canvas-cream"
+            : "border-b border-white/[0.06] bg-canvas-night"
+        } ${scrolled ? "shadow-[0_12px_32px_-16px_rgba(0,0,0,0.8)]" : ""}`}
       >
         <div
           data-tauri-drag-region
@@ -160,23 +165,28 @@ export function TitleBar({ route, navigate }: TitleBarProps) {
             className="group flex shrink-0 items-center gap-2.5"
             aria-label="Agamiz Cinema — Home"
           >
-            <span className="glass-mint flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl transition-transform duration-ui ease-spring group-hover:scale-105 group-active:scale-95">
-              <img
-                src={logoUrl}
-                alt=""
-                className="h-7 w-7 object-contain"
-                draggable={false}
-              />
+            <span
+              className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent/10 transition-transform duration-ui ease-spring group-hover:scale-105 group-active:scale-95"
+            >
+              <Logo className="h-7 w-7 text-accent" />
             </span>
-            <span className="heading-display hidden text-lg leading-none text-paper lg:block">
-              Agamiz<span className="text-gradient-mint"> Cinema</span>
+            <span
+              className={`heading-display hidden text-lg leading-none lg:block ${
+                isLight ? "text-ink" : "text-on-primary"
+              }`}
+            >
+              Agamiz Cinema
             </span>
           </button>
 
           {/* Nav links (desktop) — segmented pill group */}
           <nav
             data-tauri-drag-region
-            className="hidden items-center gap-1 rounded-full border border-white/[0.06] bg-white/[0.03] p-1 md:flex"
+            className={`hidden items-center gap-1 rounded-pill p-1 md:flex ${
+              isLight
+                ? "border border-hairline-light bg-canvas-light"
+                : "border border-white/[0.06] bg-white/[0.03]"
+            }`}
           >
             {NAV_ITEMS.map((item) => {
               const active = route === item.id;
@@ -185,20 +195,24 @@ export function TitleBar({ route, navigate }: TitleBarProps) {
                 <button
                   key={item.id}
                   onClick={() => navigate(item.id)}
-                  className={`relative flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-ui ease-spring active:scale-[0.97] active:duration-press ${
+                  className={`relative flex items-center gap-2 rounded-pill px-4 py-1.5 text-sm font-medium transition-all duration-ui ease-spring active:scale-[0.97] active:duration-press ${
                     active
-                      ? "bg-white/[0.09] text-paper shadow-edge-light"
-                      : "text-ash hover:text-paper"
+                      ? "bg-accent text-accent-on"
+                      : isLight
+                        ? "text-shade-60 hover:text-ink"
+                        : "text-shade-40 hover:text-on-primary"
                   }`}
                 >
-                  <Icon
-                    className={`h-4 w-4 transition-colors duration-ui ${
-                      active ? "text-mint-400" : ""
-                    }`}
-                  />
+                  <Icon className="h-4 w-4" />
                   {t(item.labelKey)}
                   {item.id === "watchlist" && count > 0 && (
-                    <span className="ms-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-mint-500 px-1.5 text-[10px] font-bold text-ink">
+                    <span
+                      className={`ms-0.5 flex h-5 min-w-5 items-center justify-center rounded-pill px-1.5 text-[10px] font-medium ${
+                        active
+                          ? "bg-canvas-night/20 text-accent-on"
+                          : "bg-aloe text-accent-soft-on"
+                      }`}
+                    >
                       {count}
                     </span>
                   )}
@@ -213,11 +227,21 @@ export function TitleBar({ route, navigate }: TitleBarProps) {
             <ExternalLinks className="hidden lg:flex" />
             <button
               onClick={() => setSearchOpen(true)}
-              className="glass-panel flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-ash transition-all duration-ui ease-spring hover:border-white/[0.16] hover:text-paper active:scale-[0.97] active:duration-press"
+              className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-all duration-ui ease-spring active:scale-[0.97] active:duration-press ${
+                isLight
+                  ? "border border-hairline-light bg-canvas-light text-shade-60 hover:border-ink/30 hover:text-ink"
+                  : "border border-white/[0.08] bg-canvas-night-elevated text-shade-40 hover:border-white/[0.16] hover:text-on-primary"
+              }`}
             >
               <Search className="h-4 w-4" />
               <span className="hidden xl:inline">{t("common.search")}</span>
-              <kbd className="hidden rounded-md border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] text-ash xl:inline">
+              <kbd
+                className={`hidden rounded-xs px-1.5 py-0.5 text-[10px] xl:inline ${
+                  isLight
+                    ? "border border-hairline-light bg-canvas-cream text-shade-50"
+                    : "border border-white/10 bg-white/5 text-shade-40"
+                }`}
+              >
                 {t("common.searchShortcut")}
               </kbd>
             </button>
@@ -227,14 +251,22 @@ export function TitleBar({ route, navigate }: TitleBarProps) {
                 <button
                   onClick={() => void windowCtl.minimize()}
                   aria-label="Minimize window"
-                  className="flex h-8 w-9 items-center justify-center rounded-lg text-ash transition-all duration-press hover:bg-white/10 hover:text-paper active:scale-95"
+                  className={`flex h-8 w-9 items-center justify-center rounded-xs transition-all duration-press active:scale-95 ${
+                    isLight
+                      ? "text-shade-60 hover:bg-shade-30 hover:text-ink"
+                      : "text-shade-40 hover:bg-white/10 hover:text-on-primary"
+                  }`}
                 >
                   <Minus className="h-4 w-4" />
                 </button>
                 <button
                   onClick={() => void windowCtl.toggleFullscreen()}
                   aria-label={windowCtl.isFullscreen ? "Exit full screen" : "Enter full screen"}
-                  className="flex h-8 w-9 items-center justify-center rounded-lg text-ash transition-all duration-press hover:bg-white/10 hover:text-paper active:scale-95"
+                  className={`flex h-8 w-9 items-center justify-center rounded-xs transition-all duration-press active:scale-95 ${
+                    isLight
+                      ? "text-shade-60 hover:bg-shade-30 hover:text-ink"
+                      : "text-shade-40 hover:bg-white/10 hover:text-on-primary"
+                  }`}
                 >
                   {windowCtl.isFullscreen ? (
                     <Minimize className="h-3.5 w-3.5" />
@@ -245,7 +277,7 @@ export function TitleBar({ route, navigate }: TitleBarProps) {
                 <button
                   onClick={() => void windowCtl.close()}
                   aria-label="Close window"
-                  className="flex h-8 w-9 items-center justify-center rounded-lg text-ash transition-all duration-press hover:bg-rose-500 hover:text-white active:scale-95"
+                  className="flex h-8 w-9 items-center justify-center rounded-xs transition-all duration-press hover:bg-rose-500 hover:text-white active:scale-95"
                 >
                   <X className="h-4 w-4" />
                 </button>

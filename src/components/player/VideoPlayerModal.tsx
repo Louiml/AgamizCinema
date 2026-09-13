@@ -7,6 +7,7 @@ import {
   ListVideo,
   RefreshCw,
   Download,
+  ExternalLink,
   ChevronLeft,
   ChevronRight,
   Film,
@@ -41,7 +42,9 @@ import {
   onDownloadError,
   onDownloadFinished,
   openDownloadWindow,
+  openInSource,
 } from "@/services/download";
+import { isTauri } from "@/services/tauri";
 import { setDiscordPresence } from "@/services/discord";
 
 const PROGRESS_TICK_MS = 15_000;
@@ -263,12 +266,25 @@ export function VideoPlayerModal() {
 
   const handleDownload = async () => {
     if (!state || downloading) return;
+    const url = embedUrl(
+      settings.defaultSource,
+      state.mediaType,
+      state.tmdbId,
+      isTV ? season : undefined,
+      isTV ? episode : undefined,
+    );
+    // Web / mobile browser: open the source's player in a new tab.
+    if (!isTauri()) {
+      openInSource(url);
+      setDownloadStatus(t("player.openedInSource"));
+      return;
+    }
+    // Desktop: open the embed in a download window with a file hook.
     setDownloading(true);
     setDownloadStatus(t("player.openingDownload"));
     try {
       await openDownloadWindow({
-        tmdbId: state.tmdbId,
-        mediaType: state.mediaType,
+        url,
         title: state.title,
         season: isTV ? season : undefined,
         episode: isTV ? episode : undefined,
@@ -431,7 +447,7 @@ export function VideoPlayerModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink-deep/85 p-0 backdrop-blur-md animate-fade-in md:px-3 md:py-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-0 animate-fade-in md:px-3 md:py-4">
       <AmbientGlow
         imageUrl={
           details?.backdrop_path
@@ -446,12 +462,12 @@ export function VideoPlayerModal() {
         {/* Header */}
         <div className="flex items-center justify-between gap-3 pb-3">
           <div className="flex min-w-0 items-center gap-3">
-            <div className="glass-mint flex h-10 w-10 shrink-0 items-center justify-center rounded-xl">
-              <MonitorPlay className="h-5 w-5 text-mint-300" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-surface-elevated-dark">
+              <MonitorPlay className="h-5 w-5 text-on-primary" />
             </div>
             <div className="min-w-0">
-              <p className="truncate font-semibold text-paper">{state.title}</p>
-              <p className="text-xs text-ash">
+              <p className="truncate font-medium text-on-primary">{state.title}</p>
+              <p className="text-xs text-shade-40">
                 {isTV
                   ? t("player.seasonEpisode", { season, episode })
                   : t("common.movie")}{" "}
@@ -464,8 +480,8 @@ export function VideoPlayerModal() {
               onClick={() => update({ cleanView: !settings.cleanView })}
               title={t("player.cleanViewTitle")}
               aria-pressed={settings.cleanView}
-              className={`btn-glass text-sm ${
-                settings.cleanView ? "text-mint-300 ring-1 ring-mint-400/40" : ""
+              className={`btn-outline-on-dark text-sm ${
+                settings.cleanView ? "bg-on-primary/15" : ""
               }`}
             >
               <Wand2 className="h-4 w-4" /> {t("player.cleanView")}
@@ -473,7 +489,7 @@ export function VideoPlayerModal() {
             <button
               onClick={() => setTrailerOpen(true)}
               title={t("player.watchTrailer")}
-              className="btn-glass text-sm"
+              className="btn-outline-on-dark text-sm"
             >
               <Film className="h-4 w-4" /> {t("player.trailer")}
             </button>
@@ -481,8 +497,8 @@ export function VideoPlayerModal() {
               onClick={() => setWatchOpen((o) => !o)}
               title={t("player.watchTogetherTitle")}
               aria-pressed={watchOpen}
-              className={`btn-glass text-sm ${
-                watchOpen ? "text-mint-300 ring-1 ring-mint-400/40" : ""
+              className={`btn-outline-on-dark text-sm ${
+                watchOpen ? "bg-on-primary/15" : ""
               }`}
             >
               <Users className="h-4 w-4" /> {t("player.watchTogether")}
@@ -495,25 +511,27 @@ export function VideoPlayerModal() {
                 update({ defaultSource: next });
               }}
               title={t("player.switchSourceTitle")}
-              className="btn-glass text-sm"
+              className="btn-outline-on-dark text-sm"
             >
               <RefreshCw className="h-4 w-4" /> {t("player.switchSource")}
             </button>
-            {downloadSupported() && (
-              <button
-                onClick={handleDownload}
-                disabled={downloading}
-                title={
-                  isTV
-                    ? t("player.downloadTvTitle", { season, episode })
-                    : t("player.downloadMovieTitle")
-                }
-                className="btn-glass text-sm disabled:opacity-50 disabled:pointer-events-none"
-              >
+            <button
+              onClick={handleDownload}
+              disabled={downloading}
+              title={
+                isTV
+                  ? t("player.downloadTvTitle", { season, episode })
+                  : t("player.downloadMovieTitle")
+              }
+              className="btn-outline-on-dark text-sm disabled:opacity-50 disabled:pointer-events-none"
+            >
+              {isTauri() ? (
                 <Download className="h-4 w-4" />
-                {downloading ? "…" : t("player.download")}
-              </button>
-            )}
+              ) : (
+                <ExternalLink className="h-4 w-4" />
+              )}
+              {downloading ? "…" : isTauri() ? t("player.download") : t("player.openInSource")}
+            </button>
             <button onClick={handleClose} aria-label={t("common.close")} className="btn-icon">
               <X className="h-5 w-5" />
             </button>
@@ -523,8 +541,8 @@ export function VideoPlayerModal() {
         {/* TV controls */}
         {isTV && (
           <div className="mb-3 flex flex-wrap items-center gap-3">
-            <label className="flex items-center gap-2 text-sm text-ash">
-              <ListVideo className="h-4 w-4 text-mint-400" />
+            <label className="flex items-center gap-2 text-sm text-shade-40">
+              <ListVideo className="h-4 w-4 text-on-primary" />
               {t("player.season")}
               <GlassSelect
                 value={season}
@@ -541,7 +559,7 @@ export function VideoPlayerModal() {
               />
             </label>
 
-            <label className="flex items-center gap-2 text-sm text-ash">
+            <label className="flex items-center gap-2 text-sm text-shade-40">
               {t("player.episode")}
               <GlassSelect
                 value={episode}
@@ -567,11 +585,11 @@ export function VideoPlayerModal() {
                 title={t("player.prevEpisode")}
                 className="btn-icon h-9 w-9 disabled:opacity-30 disabled:pointer-events-none"
               >
-                {i18n.dir() === "rtl" ? (
-                  <ChevronRight className="h-4 w-4" />
-                ) : (
-                  <ChevronLeft className="h-4 w-4" />
-                )}
+                  {i18n.dir() === "rtl" ? (
+                    <ChevronRight className="h-4 w-4" />
+                  ) : (
+                    <ChevronLeft className="h-4 w-4" />
+                  )}
               </button>
               <button
                 onClick={goNext}
@@ -580,20 +598,20 @@ export function VideoPlayerModal() {
                 title={t("player.nextEpisode")}
                 className="btn-icon h-9 w-9 disabled:opacity-30 disabled:pointer-events-none"
               >
-                {i18n.dir() === "rtl" ? (
-                  <ChevronLeft className="h-4 w-4" />
-                ) : (
-                  <ChevronRight className="h-4 w-4" />
-                )}
+                  {i18n.dir() === "rtl" ? (
+                    <ChevronLeft className="h-4 w-4" />
+                  ) : (
+                    <ChevronRight className="h-4 w-4" />
+                  )}
               </button>
             </div>
           </div>
         )}
 
-        {/* 16:9 glass player */}
+        {/* 16:9 player */}
         <ContextMenuTrigger items={playerMenuItems}>
-          <div className="glass-panel relative w-full flex-1 overflow-hidden rounded-none p-2 md:rounded-3xl">
-            <div className="relative h-full w-full overflow-hidden rounded-2xl bg-ink-deep">
+          <div className="surface-dark relative w-full flex-1 overflow-hidden rounded-none p-2 md:rounded-lg">
+            <div className="relative h-full w-full overflow-hidden rounded-md bg-canvas-night">
               {error ? (
                 <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
                   <p className="text-sm text-rose-300">{error}</p>
@@ -602,7 +620,7 @@ export function VideoPlayerModal() {
                       setError(null);
                       setRetryNonce((n) => n + 1);
                     }}
-                    className="btn-glass"
+                    className="btn-outline-on-dark"
                   >
                     <RefreshCw className="h-4 w-4" /> {t("player.retry")}
                   </button>
@@ -623,8 +641,8 @@ export function VideoPlayerModal() {
                   />
                   {iframeLoading && (
                     <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3">
-                      <Loader2 className="h-10 w-10 animate-spin-slow text-mint-400" />
-                      <p className="text-sm text-ash">{t("player.contacting")}</p>
+                      <Loader2 className="h-10 w-10 animate-spin-slow text-on-primary" />
+                      <p className="text-sm text-shade-40">{t("player.contacting")}</p>
                     </div>
                   )}
                   {}
@@ -650,7 +668,7 @@ export function VideoPlayerModal() {
         )}
 
         {/* Footer hint */}
-        <p className="pt-3 text-center text-xs text-ash-dim">
+        <p className="pt-3 text-center text-xs text-shade-50">
           {downloadStatus ??
             t("player.sourceDelivered", {
               source: sourceOf(settings.defaultSource).name,

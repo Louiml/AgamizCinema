@@ -102,18 +102,18 @@ export function WatchTogetherPanel({
   const statusLabel = describeStatus(watch.status, t);
 
   return (
-    <div className="glass-panel rounded-2xl p-3">
+    <div className="surface-dark rounded-lg p-3">
       <div className="flex items-center justify-between gap-2">
         <button
           type="button"
           onClick={() => setOpen(!open)}
-          className="btn-glass flex items-center gap-2 text-sm"
+          className="btn-outline-on-dark flex items-center gap-2 text-sm"
         >
-          <Users className="h-4 w-4 text-mint-400" />
+          <Users className="h-4 w-4 text-on-primary" />
           {t("watchTogether.title")}
         </button>
         {watch.status.phase === "ready" && (
-          <span className="flex items-center gap-1.5 text-xs text-mint-300">
+          <span className="flex items-center gap-1.5 text-xs text-on-primary">
             <UsersRound className="h-3.5 w-3.5" />
             {t("watchTogether.peers", { count: watch.peers })}
           </span>
@@ -123,9 +123,9 @@ export function WatchTogetherPanel({
       {open && (
         <div className="mt-3 space-y-3 border-t border-white/[0.06] pt-3">
           {/* Status */}
-          <div className="flex items-center justify-between gap-2 text-xs text-ash">
+          <div className="flex items-center justify-between gap-2 text-xs text-shade-40">
             <span className="flex items-center gap-2">
-              {watch.status.phase === "ready" && <span className="h-2 w-2 rounded-full bg-mint-400" />}
+              {watch.status.phase === "ready" && <span className="h-2 w-2 rounded-pill bg-on-primary" />}
               {statusLabel}
             </span>
             {watch.status.phase === "reconnecting" && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
@@ -135,11 +135,11 @@ export function WatchTogetherPanel({
           {/* Room code + copy */}
           {watch.roomId && (
             <div className="flex items-center gap-2">
-              <code className="min-w-0 flex-1 truncate rounded-lg bg-ink-deep/60 px-2.5 py-1.5 font-mono text-[11px] text-mint-200">
+              <code className="min-w-0 flex-1 truncate rounded-md bg-canvas-night px-2.5 py-1.5 font-mono text-[11px] text-on-primary">
                 {watch.roomId}
               </code>
               <button type="button" onClick={handleCopy} className="btn-icon h-8 w-8" title={t("watchTogether.copyInvite")}>
-                {copied ? <Copy className="h-4 w-4 text-mint-300" /> : <LinkIcon className="h-4 w-4" />}
+                {copied ? <Copy className="h-4 w-4 text-on-primary" /> : <LinkIcon className="h-4 w-4" />}
               </button>
             </div>
           )}
@@ -147,10 +147,10 @@ export function WatchTogetherPanel({
           {/* Host transport controls */}
           {watch.status.phase === "ready" && watch.isHost && (
             <div className="flex items-center gap-2">
-              <button type="button" onClick={() => handleTransport("PLAY")} className="btn-glass flex flex-1 items-center justify-center gap-2 text-sm">
+              <button type="button" onClick={() => handleTransport("PLAY")} className="btn-outline-on-dark flex flex-1 items-center justify-center gap-2 text-sm">
                 <Play className="h-4 w-4" /> {t("watchTogether.playAll")}
               </button>
-              <button type="button" onClick={() => handleTransport("PAUSE")} className="btn-glass flex flex-1 items-center justify-center gap-2 text-sm">
+              <button type="button" onClick={() => handleTransport("PAUSE")} className="btn-outline-on-dark flex flex-1 items-center justify-center gap-2 text-sm">
                 <Pause className="h-4 w-4" /> {t("watchTogether.pauseAll")}
               </button>
             </div>
@@ -160,7 +160,7 @@ export function WatchTogetherPanel({
           {watch.status.phase === "idle" && (
             <>
               <div className="flex items-center gap-2">
-                <button type="button" onClick={() => watch.createRoom().catch(() => undefined)} className="btn-glass flex-1 text-sm">
+                <button type="button" onClick={() => watch.createRoom().catch(() => undefined)} className="btn-outline-on-dark flex-1 text-sm">
                   {t("watchTogether.createRoom")}
                 </button>
               </div>
@@ -179,7 +179,7 @@ export function WatchTogetherPanel({
                     setJoinInput("");
                   }}
                   disabled={!joinInput.trim()}
-                  className="btn-glass text-sm disabled:opacity-40"
+                  className="btn-outline-on-dark text-sm disabled:opacity-40"
                 >
                   {t("watchTogether.join")}
                 </button>
@@ -189,7 +189,7 @@ export function WatchTogetherPanel({
 
           {/* Leave */}
           {watch.status.phase === "ready" && (
-            <button type="button" onClick={watch.leaveRoom} className="btn-glass flex w-full items-center justify-center gap-2 text-sm">
+            <button type="button" onClick={watch.leaveRoom} className="btn-outline-on-dark flex w-full items-center justify-center gap-2 text-sm">
               <LogOut className="h-4 w-4" /> {t("watchTogether.leave")}
             </button>
           )}

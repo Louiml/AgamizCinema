@@ -5,11 +5,16 @@ import {
   changeLanguage,
   type AppLanguage,
 } from "@/i18n";
+import { useIsLight } from "@/providers/SettingsProvider";
 
-const LANGUAGES: Array<{ code: AppLanguage; label: string; labelCode: string }> = [
-  { code: "en", label: "English", labelCode: "EN" },
-  { code: "he", label: "עברית", labelCode: "HE" },
-  { code: "ru", label: "Русский", labelCode: "RU" },
+const LANGUAGES: Array<{ code: AppLanguage; label: string; labelCode: string; country: string }> = [
+  { code: "en", label: "English", labelCode: "EN", country: "gb" },
+  { code: "he", label: "עברית", labelCode: "HE", country: "il" },
+  { code: "ru", label: "Русский", labelCode: "RU", country: "ru" },
+  { code: "de", label: "Deutsch", labelCode: "DE", country: "de" },
+  { code: "ar", label: "العربية", labelCode: "AR", country: "sa" },
+  { code: "it", label: "Italiano", labelCode: "IT", country: "it" },
+  { code: "ja", label: "日本語", labelCode: "JA", country: "jp" },
 ];
 
 interface LanguageSelectorProps {
@@ -24,6 +29,7 @@ export function LanguageSelector({
   const { i18n, t } = useTranslation();
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const isLight = useIsLight();
 
   const active = i18n.language as AppLanguage;
   const activeMeta =
@@ -59,11 +65,14 @@ export function LanguageSelector({
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label={t("settings.language")}
-        className={`glass-panel inline-flex h-10 items-center gap-1.5 rounded-xl px-3 text-sm font-semibold text-paper transition-all duration-ui ease-spring hover:border-mint-500/30 active:scale-95 active:duration-press ${
-          open ? "border-mint-500/40" : ""
-        }`}
+        className={`inline-flex h-10 items-center gap-1.5 rounded-md px-3 text-sm font-medium transition-all duration-ui ease-spring active:scale-95 active:duration-press ${
+          isLight
+            ? "border border-hairline-light bg-canvas-light text-ink hover:border-ink/30"
+            : "surface-dark text-on-primary hover:border-white/[0.16]"
+        } ${open ? (isLight ? "border-ink/30" : "border-white/[0.2]") : ""}`}
       >
-        <Globe className="h-4 w-4 shrink-0 text-mint-400" />
+        <Globe className={`h-4 w-4 shrink-0 ${isLight ? "text-ink" : "text-on-primary"}`} />
+        <span className={`fi fi-${activeMeta.country} text-[1.15em] leading-none`} aria-hidden />
         <span className="tabular-nums tracking-wide">{activeMeta.labelCode}</span>
       </button>
 
@@ -71,9 +80,9 @@ export function LanguageSelector({
         <div
           role="menu"
           aria-label={t("settings.language")}
-          className={`glass-panel absolute top-full z-[70] mt-2 w-40 min-w-[11rem] origin-top animate-scale-in rounded-2xl p-1.5 shadow-pop ${
-            align === "end" ? "end-0" : "start-0"
-          }`}
+          className={`absolute top-full z-[70] mt-2 max-h-[min(70vh,20rem)] w-44 min-w-[12rem] origin-top animate-scale-in overflow-y-auto rounded-md p-1.5 shadow-elev-4 ${
+            isLight ? "surface-light" : "surface-dark"
+          } ${align === "end" ? "end-0" : "start-0"}`}
         >
           {LANGUAGES.map((lang) => {
             const activeLang = lang.code === active;
@@ -83,26 +92,22 @@ export function LanguageSelector({
                 role="menuitemradio"
                 aria-checked={activeLang}
                 onClick={() => pick(lang.code)}
-                className={`flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors duration-150 ${
+                className={`flex w-full items-center justify-between gap-3 rounded-xs px-3 py-2.5 text-sm transition-colors duration-150 ${
                   activeLang
-                    ? "bg-white/10 text-paper"
-                    : "text-ash hover:bg-white/5 hover:text-paper"
+                    ? isLight
+                      ? "bg-shade-30 text-ink"
+                      : "bg-white/10 text-on-primary"
+                    : isLight
+                      ? "text-shade-60 hover:bg-shade-30/60 hover:text-ink"
+                      : "text-shade-40 hover:bg-white/5 hover:text-on-primary"
                 }`}
               >
                 <span className="flex items-center gap-2.5">
-                  <span
-                    className={`flex h-6 w-8 items-center justify-center rounded-md text-[10px] font-bold ${
-                      activeLang
-                        ? "bg-mint-500 text-ink"
-                        : "border border-white/10 bg-white/5 text-ash"
-                    }`}
-                  >
-                    {lang.labelCode}
-                  </span>
+                  <span className={`fi fi-${lang.country} text-[1.1em] leading-none`} aria-hidden />
                   <span>{t(`lang.${lang.code}`)}</span>
                 </span>
                 {activeLang && (
-                  <Check className="h-4 w-4 shrink-0 text-mint-400" />
+                  <Check className={`h-4 w-4 shrink-0 ${isLight ? "text-ink" : "text-on-primary"}`} />
                 )}
               </button>
             );

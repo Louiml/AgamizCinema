@@ -3,8 +3,8 @@ import { X } from "lucide-react";
 import { dismiss, subscribe, type Toast } from "@/lib/toast";
 
 const TONE_RING: Record<string, string> = {
-  default: "text-mint-400",
-  success: "text-mint-400",
+  default: "text-on-primary",
+  success: "text-on-primary",
   error: "text-rose-400",
 };
 
@@ -31,11 +31,11 @@ export function ToastViewport() {
           <button
             key={t.id}
             onClick={() => dismiss(t.id)}
-            className="glass-panel pointer-events-auto flex max-w-sm animate-toast-in items-center gap-3 rounded-2xl px-4 py-3 text-start shadow-pop"
+            className="surface-dark pointer-events-auto flex max-w-sm animate-toast-in items-center gap-3 rounded-lg px-4 py-3 text-start shadow-elev-4"
           >
             {Icon && <Icon className={`h-4.5 w-4.5 shrink-0 ${TONE_RING[t.tone ?? "default"]}`} />}
-            <span className="text-sm font-medium text-paper">{t.message}</span>
-            <X className="h-3.5 w-3.5 shrink-0 text-ash-dim" />
+            <span className="text-sm font-medium text-on-primary">{t.message}</span>
+            <X className="h-3.5 w-3.5 shrink-0 text-shade-40" />
           </button>
         );
       })}

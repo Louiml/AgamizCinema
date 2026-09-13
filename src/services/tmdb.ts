@@ -200,16 +200,32 @@ export const tmdb = {
       genres?: number[];
       sort?: string;
       page?: number;
+      yearFrom?: number;
+      yearTo?: number;
+      minRating?: number;
     } = {},
   ): Promise<{ results: NormalizedMedia[]; totalPages: number }> {
+    const params: Record<string, string | number | boolean | undefined> = {
+      language: currentTmdbLanguage(),
+      include_adult: "false",
+      page: options.page ?? 1,
+      sort_by: options.sort ?? "popularity.desc",
+      with_genres: options.genres?.length ? options.genres.join(",") : undefined,
+    };
+    if (options.yearFrom) {
+      const key = type === "tv" ? "first_air_date.gte" : "primary_release_date.gte";
+      params[key] = `${options.yearFrom}-01-01`;
+    }
+    if (options.yearTo) {
+      const key = type === "tv" ? "first_air_date.lte" : "primary_release_date.lte";
+      params[key] = `${options.yearTo}-12-31`;
+    }
+    if (options.minRating && options.minRating > 0) {
+      params["vote_average.gte"] = options.minRating;
+      params["vote_count.gte"] = 200;
+    }
     const res = await tmdbFetch<PaginatedResponse<TMDBMovie>>(`/discover/${type}`, {
-      params: {
-        language: currentTmdbLanguage(),
-        include_adult: "false",
-        page: options.page ?? 1,
-        sort_by: options.sort ?? "popularity.desc",
-        with_genres: options.genres?.length ? options.genres.join(",") : undefined,
-      },
+      params,
     });
     return {
       results: res.results.map((r) => normalizeMedia(r, type)),

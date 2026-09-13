@@ -3,22 +3,18 @@ import { useTranslation } from "react-i18next";
 import { Search } from "lucide-react";
 import { SearchModal } from "@/components/search/SearchModal";
 import { LanguageSelector } from "@/components/ui/LanguageSelector";
-import type { Route } from "@/router/useHashRoute";
-import logoUrl from "@/logo.png";
+import { Logo } from "@/components/ui/Logo";
+import type { Route, Canvas } from "@/router/useHashRoute";
 
 interface MobileHeaderProps {
   navigate: (r: Route) => void;
+  canvas: Canvas;
 }
 
-/**
- * Sticky top header for the mobile layout: brand mark on the left and an
- * inline search trigger on the right. There is intentionally no "download"
- * button here — the desktop download prompt is Windows-only and omitted on
- * mobile (see {@link InstallBanner}).
- */
-export function MobileHeader({ navigate }: MobileHeaderProps) {
+export function MobileHeader({ navigate, canvas }: MobileHeaderProps) {
   const { t } = useTranslation();
   const [searchOpen, setSearchOpen] = useState(false);
+  const isLight = canvas === "cream";
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -33,7 +29,13 @@ export function MobileHeader({ navigate }: MobileHeaderProps) {
 
   return (
     <>
-      <header className="glass-chrome sticky top-0 z-40 md:hidden">
+      <header
+        className={`sticky top-0 z-40 md:hidden ${
+          isLight
+            ? "border-b border-hairline-light bg-canvas-cream"
+            : "border-b border-white/[0.06] bg-canvas-night"
+        }`}
+      >
         <div className="flex h-14 items-center gap-2 px-4">
           {/* Brand */}
           <button
@@ -41,16 +43,17 @@ export function MobileHeader({ navigate }: MobileHeaderProps) {
             className="group flex min-w-0 flex-1 items-center gap-2.5 text-start"
             aria-label="Agamiz Cinema — Home"
           >
-            <span className="glass-mint flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl transition-transform duration-300 group-hover:scale-105">
-              <img
-                src={logoUrl}
-                alt=""
-                className="h-7 w-7 object-contain"
-                draggable={false}
-              />
+            <span
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent/10 transition-transform duration-300 group-hover:scale-105"
+            >
+              <Logo className="h-7 w-7 text-accent" />
             </span>
-            <span className="heading-display truncate text-lg leading-none text-paper">
-              Agamiz<span className="text-gradient-mint"> Cinema</span>
+            <span
+              className={`heading-display truncate text-lg leading-none ${
+                isLight ? "text-ink" : "text-on-primary"
+              }`}
+            >
+              Agamiz Cinema
             </span>
           </button>
 
@@ -59,7 +62,11 @@ export function MobileHeader({ navigate }: MobileHeaderProps) {
           <button
             onClick={() => setSearchOpen(true)}
             aria-label={t("common.searchPlaceholder")}
-            className="glass-panel flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-paper transition-all duration-ui ease-spring hover:border-white/[0.16] active:scale-90 active:duration-press hover:text-mint-300"
+            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-md transition-all duration-ui ease-spring active:scale-90 active:duration-press ${
+              isLight
+                ? "border border-hairline-light bg-canvas-light text-ink hover:border-ink/30"
+                : "border border-white/[0.08] bg-canvas-night-elevated text-on-primary hover:border-white/[0.16]"
+            }`}
           >
             <Search className="h-5 w-5" />
           </button>

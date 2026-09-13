@@ -39,6 +39,23 @@ export function TopTenRow({ title, subtitle, media }: TopTenRowProps) {
     return () => window.removeEventListener("resize", updateArrows);
   }, [media.length, rtl]);
 
+  // Hijack vertical wheel over the row → horizontal scroll. Always
+  // preventDefault so the page never scrolls top-to-bottom over the row (no
+  // end-of-row "space" jump). Direct 1:1 scrollLeft tracking is the smoothest
+  // for wheel input — no queued smooth-animation lag, matches the wheel exactly.
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      // Let genuine horizontal input (trackpad swipe, shift+wheel) pass through.
+      if (Math.abs(e.deltaX) >= Math.abs(e.deltaY)) return;
+      e.preventDefault();
+      el.scrollLeft += rtl ? -e.deltaY : e.deltaY;
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, [rtl]);
+
   const scrollByDir = (dir: 1 | -1) => {
     const el = scrollerRef.current;
     if (!el) return;
@@ -53,11 +70,11 @@ export function TopTenRow({ title, subtitle, media }: TopTenRowProps) {
     <section className="relative animate-fade-in-up">
       <div className="mb-4 flex items-end justify-between gap-4">
         <div>
-          <h2 className="heading-display flex items-center gap-2.5 text-lg text-paper sm:text-xl">
-            <span className="text-mint-400">10</span>
+          <h2 className="heading-display flex items-center gap-2.5 text-lg text-on-primary sm:text-xl">
+            <span className="eyebrow text-shade-40">10</span>
             {title}
           </h2>
-          {subtitle && <p className="mt-1 text-sm text-ash">{subtitle}</p>}
+          {subtitle && <p className="mt-1 text-sm text-shade-40">{subtitle}</p>}
         </div>
         {hasMedia && (
           <div className="flex shrink-0 gap-2">
@@ -94,14 +111,10 @@ export function TopTenRow({ title, subtitle, media }: TopTenRowProps) {
             >
               <span
                 aria-hidden
-                className="pointer-events-none absolute -bottom-3 start-0 z-0 select-none font-display text-[8rem] font-black leading-none tracking-tighter sm:text-[9rem] lg:text-[10rem]"
+                className="pointer-events-none absolute -bottom-3 start-0 z-0 select-none font-display text-[8rem] font-light leading-none tracking-tighter sm:text-[9rem] lg:text-[10rem]"
                 style={{
-                  background:
-                    "linear-gradient(to bottom, rgba(110,231,183,0.85), rgba(16,185,129,0.15))",
-                  WebkitBackgroundClip: "text",
-                  backgroundClip: "text",
                   color: "transparent",
-                  WebkitTextStroke: "1px rgba(255,255,255,0.06)",
+                  WebkitTextStroke: "1.5px rgba(255,255,255,0.45)",
                 }}
               >
                 {i + 1}

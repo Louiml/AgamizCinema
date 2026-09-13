@@ -4,37 +4,83 @@ export default {
   theme: {
     extend: {
       colors: {
+        // ── Mode-driven tokens ── `data-canvas` (from the Light/Dark setting)
+        // decides which palette is active. Both "dark" and "light" token
+        // variants resolve to the same active semantic var so components that
+        // hardcode either track render in the chosen mode.
         ink: {
-          deep: "#050607",
-          DEFAULT: "#0a0d0f",
-          raise: "#101416",
-          float: "#161b1e",
-          overlay: "#1c2226",
+          DEFAULT: "rgb(var(--text) / <alpha-value>)",
+          deep: "rgb(var(--canvas) / <alpha-value>)",
+          raise: "rgb(var(--canvas-elev) / <alpha-value>)",
+          float: "rgb(var(--canvas-elev) / <alpha-value>)",
+          overlay: "rgb(var(--surface-elev) / <alpha-value>)",
+        },
+        "on-primary": "rgb(var(--text) / <alpha-value>)",
+        canvas: {
+          night: "rgb(var(--canvas) / <alpha-value>)",
+          "night-elevated": "rgb(var(--canvas-elev) / <alpha-value>)",
+          light: "rgb(var(--canvas-elev) / <alpha-value>)",
+          cream: "rgb(var(--canvas) / <alpha-value>)",
+        },
+        "surface-elevated-dark": "rgb(var(--surface-elev) / <alpha-value>)",
+        hairline: {
+          light: "rgb(var(--hairline) / <alpha-value>)",
+          dark: "rgb(var(--hairline) / <alpha-value>)",
+        },
+        shade: {
+          30: "#d4d4d8",
+          40: "#a1a1aa",
+          50: "#71717a",
+          60: "#52525b",
+          70: "#3f3f46",
+        },
+        aloe: "rgb(var(--accent-soft) / <alpha-value>)",
+        pistachio: "rgb(var(--accent-soft) / <alpha-value>)",
+        accent: "rgb(var(--accent) / <alpha-value>)",
+        "accent-on": "rgb(var(--accent-on) / <alpha-value>)",
+        "accent-soft": "rgb(var(--accent-soft) / <alpha-value>)",
+        "accent-soft-on": "rgb(var(--accent-soft-on) / <alpha-value>)",
+        contrast: "rgb(var(--contrast) / <alpha-value>)",
+        "on-contrast": "rgb(var(--on-contrast) / <alpha-value>)",
+        link: {
+          cool1: "#9dabad",
+          cool2: "#9797a2",
+          cool3: "#bdbdca",
+          mint: "#99b3ad",
+        },
+        // ── Legacy compat aliases (unreferenced; tree-shaken) ──
+        paper: "#ffffff",
+        ash: {
+          DEFAULT: "#a1a1aa",
+          dim: "#71717a",
         },
         mint: {
-          300: "#6ee7b7",
-          400: "#34d399",
-          500: "#10b981",
-          600: "#059669",
-          700: "#047857",
-        },
-        paper: "#f3f6f4",
-        ash: {
-          DEFAULT: "#9aa5a1",
-          dim: "#6b7572",
+          300: "#c1fbd4",
+          400: "#d4f9e0",
+          500: "#1e2c31",
+          600: "#3f3f46",
+          700: "#52525b",
         },
         abyss: {
-          DEFAULT: "#0a0d0f",
-          deep: "#050607",
-          dark: "#101416",
+          DEFAULT: "#000000",
+          deep: "#000000",
+          dark: "#0a0a0a",
         },
         forest: {
-          DEFAULT: "#101416",
-          mid: "#161b1e",
-          light: "#1c2226",
+          DEFAULT: "#0a0a0a",
+          mid: "#0a0a0a",
+          light: "#1e2c31",
         },
-        cream: "#f3f6f4",
-        mist: "#9aa5a1",
+        cream: "#fbfbf5",
+        mist: "#a1a1aa",
+      },
+      borderRadius: {
+        xs: "4px",
+        sm: "5px",
+        md: "8px",
+        lg: "12px",
+        xl: "20px",
+        pill: "9999px",
       },
       fontFamily: {
         sans: [
@@ -49,12 +95,39 @@ export default {
           "sans-serif",
         ],
         display: [
-          "Sora",
+          "Inter Display",
           "Inter",
-          "ui-sans-serif",
-          "system-ui",
+          "Helvetica Neue",
+          "Arial",
           "sans-serif",
         ],
+      },
+      fontSize: {
+        "display-xxl": ["96px", { lineHeight: "1.0", letterSpacing: "2.4px" }],
+        "display-xl": ["70px", { lineHeight: "1.0" }],
+        "display-lg": ["55px", { lineHeight: "1.16" }],
+        "display-md": ["48px", { lineHeight: "1.14" }],
+        "heading-xl": ["28px", { lineHeight: "1.28", letterSpacing: "0.42px" }],
+        "heading-lg": ["24px", { lineHeight: "1.14", letterSpacing: "0.36px" }],
+        "heading-md": ["20px", { lineHeight: "1.4", letterSpacing: "0.3px" }],
+        "heading-sm": ["18px", { lineHeight: "1.25", letterSpacing: "0.72px" }],
+        "body-lg": ["18px", { lineHeight: "1.56" }],
+        "body-md": ["16px", { lineHeight: "1.5" }],
+        caption: ["14px", { lineHeight: "1.49", letterSpacing: "0.28px" }],
+        micro: ["13px", { lineHeight: "1.5", letterSpacing: "-0.13px" }],
+        "eyebrow-cap": ["12px", { lineHeight: "1.2", letterSpacing: "0.72px" }],
+      },
+      fontWeight: {
+        thin330: "330",
+        body420: "420",
+        body550: "550",
+      },
+      spacing: {
+        xxs: "2px",
+        xs: "4px",
+        md: "12px",
+        xxl: "32px",
+        huge: "64px",
       },
       transitionTimingFunction: {
         spring: "cubic-bezier(0.32, 0.72, 0, 1)",
@@ -67,13 +140,13 @@ export default {
         surface: "400ms",
       },
       boxShadow: {
-        "glow-mint": "0 0 32px -10px rgba(16, 185, 129, 0.45)",
-        "glow-soft": "0 0 20px -8px rgba(52, 211, 153, 0.3)",
-        "card-hover":
-          "0 18px 44px -14px rgba(0, 0, 0, 0.7), 0 0 24px -8px rgba(16, 185, 129, 0.22)",
-        "glass-inset": "inset 0 1px 0 0 rgba(255, 255, 255, 0.07)",
+        "elev-1": "0 1px 2px rgba(255,255,255,0.05), inset 0 1px 0 rgba(255,255,255,0.04)",
+        "elev-2":
+          "0 0 0 1px rgba(255,255,255,0.08), 0 1px 3px rgba(0,0,0,0.3), 0 5px 10px rgba(0,0,0,0.2)",
+        "elev-3":
+          "0 8px 8px rgba(0,0,0,0.1), 0 4px 4px rgba(0,0,0,0.1), 0 2px 2px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.1)",
+        "elev-4": "0 25px 50px -12px rgba(0,0,0,0.25)",
         "edge-light": "inset 0 1px 0 0 rgba(255, 255, 255, 0.08)",
-        pop: "0 24px 60px -16px rgba(0, 0, 0, 0.75)",
       },
       animation: {
         "fade-in": "fadeIn 0.4s cubic-bezier(0.32, 0.72, 0, 1) both",

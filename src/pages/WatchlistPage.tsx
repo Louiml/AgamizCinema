@@ -54,22 +54,22 @@ export function WatchlistPage({ navigate }: WatchlistPageProps) {
       {/* Header */}
       <div className="flex flex-wrap items-end justify-between gap-4 animate-fade-in-up">
         <div>
-          <h1 className="heading-display flex items-center gap-3 text-3xl text-paper sm:text-4xl">
+          <h1 className="heading-display flex items-center gap-3 text-3xl text-ink sm:text-4xl">
             {t("watchlist.title")}
             {count > 0 && (
-              <span className="glass-mint flex h-9 items-center gap-1.5 rounded-full px-3.5 text-sm font-bold text-mint-300">
+              <span className="pill-tag-aloe flex h-9 items-center gap-1.5 px-3.5 text-sm font-medium normal-case tracking-normal">
                 <Bookmark className="h-4 w-4" />
                 {t("watchlist.saved", { count })}
               </span>
             )}
           </h1>
-          <p className="mt-1.5 text-sm text-ash">{t("watchlist.subtitle")}</p>
+          <p className="mt-1.5 text-sm text-shade-60">{t("watchlist.subtitle")}</p>
         </div>
 
         {count > 0 && (
           <button
             onClick={() => setConfirmClear(true)}
-            className="btn-glass text-sm text-rose-300 hover:border-rose-400/30 hover:bg-rose-500/10"
+            className="btn-outline-on-light text-sm text-rose-500 hover:border-rose-400/40 hover:bg-rose-500/10 hover:text-rose-600"
           >
             <Trash2 className="h-4 w-4" /> {t("watchlist.clearAll")}
           </button>
@@ -79,12 +79,12 @@ export function WatchlistPage({ navigate }: WatchlistPageProps) {
       {/* In-page search */}
       {count > 0 && (
         <div className="relative max-w-xl animate-fade-in-up">
-          <Search className="pointer-events-none absolute start-4 top-1/2 h-4 w-4 -translate-y-1/2 text-mint-400" />
+          <Search className="pointer-events-none absolute start-4 top-1/2 h-4 w-4 -translate-y-1/2 text-shade-50" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t("watchlist.filterPlaceholder")}
-            className="input-glass ps-11"
+            className="input-light ps-11"
           />
         </div>
       )}
@@ -96,7 +96,7 @@ export function WatchlistPage({ navigate }: WatchlistPageProps) {
           title={t("watchlist.emptyTitle")}
           description={t("watchlist.emptyDesc")}
           action={
-            <button onClick={() => navigate("discover")} className="btn-mint">
+            <button onClick={() => navigate("discover")} className="btn-primary-pill">
               <Compass className="h-4 w-4" /> {t("watchlist.exploreDiscover")}
             </button>
           }
@@ -123,7 +123,7 @@ export function WatchlistPage({ navigate }: WatchlistPageProps) {
                 <MediaCard media={refToNormalized(item)} index={i} />
                 <button
                   onClick={() => handleRemove(item.id, item.mediaType)}
-                  className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-xs font-medium text-ash transition-all duration-ui ease-spring hover:border-rose-400/40 hover:bg-rose-500/10 hover:text-rose-300 active:scale-[0.97] active:duration-press"
+                  className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-md border border-hairline-light bg-canvas-light px-3 py-2 text-xs font-medium text-shade-60 transition-all duration-ui ease-spring hover:border-rose-400/40 hover:bg-rose-500/10 hover:text-rose-600 active:scale-[0.97] active:duration-press"
                 >
                   <BookmarkX className="h-3.5 w-3.5" />
                   {t("watchlist.remove")}
@@ -136,7 +136,7 @@ export function WatchlistPage({ navigate }: WatchlistPageProps) {
 
       {/* Footer summary */}
       {filtered.length > 0 && (
-        <p className="text-center text-xs text-ash-dim">
+        <p className="text-center text-xs text-shade-50">
           {count === 1
             ? t("watchlist.showing", { shown: filtered.length, total: count })
             : t("watchlist.showingPlural", { shown: filtered.length, total: count })}

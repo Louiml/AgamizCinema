@@ -12,6 +12,7 @@ import type { NormalizedMedia } from "@/services/tmdb";
 import { useWatchlist } from "@/providers/WatchlistProvider";
 import { usePlayer } from "@/providers/TMDBProvider";
 import { useDetails } from "@/providers/DetailsProvider";
+import { useIsLight } from "@/providers/SettingsProvider";
 import { ContextMenuTrigger } from "@/components/ui/ContextMenuTrigger";
 import { toMediaRef } from "@/lib/media";
 import { toast } from "@/lib/toast";
@@ -39,6 +40,7 @@ export function MediaCard({
   const { open } = usePlayer();
   const { open: openDetails } = useDetails();
   const [imageLoaded, setImageLoaded] = useState(false);
+  const isLight = useIsLight();
 
   const saved = has(media.id, media.mediaType);
   const year = media.releaseDate?.slice(0, 4) ?? "—";
@@ -95,7 +97,13 @@ export function MediaCard({
       style={{ animationDelay: `${Math.min(index * 45, 450)}ms` }}
       onClick={handleCardClick}
     >
-      <div className="glass-card relative overflow-hidden rounded-2xl">
+      <div
+        className={`relative overflow-hidden rounded-lg ${
+          isLight
+            ? "border border-hairline-light bg-canvas-light shadow-elev-3 transition-all duration-ui ease-spring hover:-translate-y-1 hover:shadow-elev-4"
+            : "surface-dark transition-all duration-ui ease-spring hover:border-white/[0.16] hover:bg-white/[0.06]"
+        }`}
+      >
         {/* Poster */}
         <div className="relative aspect-[2/3] overflow-hidden">
           {media.posterPath ? (
@@ -109,8 +117,8 @@ export function MediaCard({
               }`}
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-ink-float to-ink-deep">
-              <Film className="h-12 w-12 text-mint-500/40" />
+            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-canvas-night-elevated to-canvas-night">
+              <Film className={`h-12 w-12 ${isLight ? "text-shade-40" : "text-shade-70"}`} />
             </div>
           )}
           {!media.posterPath && (
@@ -120,19 +128,19 @@ export function MediaCard({
           {/* Persistent bottom gradient */}
           <div className="card-overlay pointer-events-none absolute inset-x-0 bottom-0 h-1/2" />
 
-          {/* Hover quick-action — light gradient, no heavy blur wash */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-t from-ink/85 via-ink/30 to-transparent opacity-0 transition-opacity duration-ui ease-spring group-hover:opacity-100">
+          {/* Hover quick-action */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-t from-canvas-night/85 via-canvas-night/30 to-transparent opacity-0 transition-opacity duration-ui ease-spring group-hover:opacity-100">
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 handlePlay();
               }}
               aria-label={`${t("home.watchNow")} — ${media.title}`}
-              className="flex h-14 w-14 items-center justify-center rounded-full bg-mint-500 text-ink shadow-glow-mint transition-transform duration-ui ease-spring hover:scale-110 active:scale-95 active:duration-press"
+              className="flex h-14 w-14 items-center justify-center rounded-pill bg-accent text-accent-on transition-transform duration-ui ease-spring hover:scale-110 active:scale-95 active:duration-press"
             >
               <Play className="h-6 w-6 translate-x-0.5" fill="currentColor" />
             </button>
-            <span className="text-xs font-medium tracking-wide text-paper/80 uppercase">
+            <span className="eyebrow text-on-primary/80">
               {isTV ? t("home.playSeries") : t("home.watchNow")}
             </span>
           </div>
@@ -148,10 +156,12 @@ export function MediaCard({
               });
             }}
             aria-label={saved ? t("watchlist.remove") : t("home.addToWatchlist")}
-            className={`absolute end-2.5 top-2.5 flex h-9 w-9 items-center justify-center rounded-xl backdrop-blur-lg transition-all duration-ui ease-spring active:scale-90 active:duration-press ${
+            className={`absolute end-2.5 top-2.5 flex h-9 w-9 items-center justify-center rounded-md transition-all duration-ui ease-spring active:scale-90 active:duration-press ${
               saved
-                ? "bg-mint-500 text-ink shadow-glow-soft"
-                : "bg-ink-deep/70 text-paper hover:bg-ink-deep/90 hover:text-mint-300"
+                ? "bg-accent text-accent-on"
+                : isLight
+                  ? "border border-hairline-light bg-canvas-light/80 text-ink hover:bg-canvas-cream"
+                  : "border border-white/[0.12] bg-canvas-night/70 text-on-primary hover:bg-canvas-night-elevated"
             }`}
           >
             {saved ? (
@@ -168,9 +178,9 @@ export function MediaCard({
 
           {/* Progress bar (continue watching) */}
           {progress !== undefined && (
-            <div className="absolute inset-x-0 bottom-0 h-1 bg-ink-deep/60">
+            <div className="absolute inset-x-0 bottom-0 h-1 bg-canvas-night/60">
               <div
-                className="h-full bg-gradient-to-r from-mint-400 to-emerald-500 transition-all duration-surface ease-spring"
+                className="h-full bg-accent transition-all duration-surface ease-spring"
                 style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
               />
             </div>
@@ -180,10 +190,20 @@ export function MediaCard({
           {/* Info */}
           <div className="flex items-center justify-between gap-2 px-3 py-2.5">
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-paper transition-colors duration-ui group-hover:text-mint-300">
+              <p
+                className={`truncate text-sm font-medium transition-colors duration-ui ${
+                  isLight
+                    ? "text-ink group-hover:text-ink"
+                    : "text-on-primary group-hover:text-on-primary"
+                }`}
+              >
                 {media.title}
               </p>
-              <p className="mt-0.5 flex items-center gap-1.5 text-xs text-ash">
+              <p
+                className={`mt-0.5 flex items-center gap-1.5 text-xs ${
+                  isLight ? "text-shade-50" : "text-shade-40"
+                }`}
+              >
                 {isTV && <Clapperboard className="h-3 w-3" />}
                 <span>{year}</span>
               </p>

@@ -1,20 +1,20 @@
 import { isTauri, runInTauri } from "@/services/tauri";
-import type { MediaType } from "@/types/tmdb";
 
 /**
- * Desktop download helpers.
+ * Download helpers.
  *
- * vidsync.live hands out its streams through a Turnstile-protected, encrypted
- * API, so the app can't produce direct .mp4/.m3u8 URLs. Instead the Rust
- * backend hosts a compact download window with the vidsync player for the
- * title, and a download hook on every window routes any download that starts
- * inside the app (including the player's own download option) into the folder
- * configured in Settings. These helpers drive that flow.
+ * The embed sources don't hand out direct .mp4/.m3u8 URLs (Turnstile-protected,
+ * encrypted), so the app can't fetch a file itself. Instead:
+ *  - Desktop (Tauri): opens the chosen source's embed in a dedicated window
+ *    with a download hook. If the source's player fires a real download, the
+ *    hook routes the file into the folder set in Settings.
+ *  - Web / mobile browser: opens the source's embed in a new tab so the user
+ *    can use the source's own save/offline option.
  */
 
 export interface DownloadWindowOptions {
-  tmdbId: number;
-  mediaType: MediaType;
+  /** The embed URL to load (built from the user's selected source). */
+  url: string;
   title: string;
   season?: number;
   episode?: number;
@@ -28,13 +28,18 @@ export interface DownloadFinishedPayload {
 
 export const downloadSupported = (): boolean => isTauri();
 
-/** Opens (or focuses) a download window for a movie / TV episode. */
+/** Web/mobile: open the source's embed in a new tab. Synchronous so popup
+ *  blockers don't kill it (must run inside the click handler). */
+export function openInSource(url: string): void {
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
+/** Desktop: opens (or focuses) a download window for a movie / TV episode. */
 export async function openDownloadWindow(
   opts: DownloadWindowOptions,
 ): Promise<string> {
   return runInTauri<string>("open_download_window", {
-    tmdbId: opts.tmdbId,
-    mediaType: opts.mediaType,
+    url: opts.url,
     title: opts.title,
     season: opts.season,
     episode: opts.episode,

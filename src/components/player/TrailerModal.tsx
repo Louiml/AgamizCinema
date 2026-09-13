@@ -71,24 +71,24 @@ export function TrailerModal({
 
   return (
     <div
-      className="fixed inset-0 z-[70] flex items-center justify-center bg-ink-deep/85 px-4 py-6 backdrop-blur-md animate-fade-in"
+      className="fixed inset-0 z-[70] flex items-center justify-center bg-black/85 px-4 py-6 animate-fade-in"
       onClick={onClose}
     >
       <div
-        className="glass-panel relative flex w-full max-w-4xl flex-col overflow-hidden rounded-3xl shadow-pop animate-scale-in"
+        className="surface-dark relative flex w-full max-w-4xl flex-col overflow-hidden rounded-lg shadow-elev-4 animate-scale-in"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between gap-3 border-b border-white/[0.08] px-5 py-4">
           <div className="flex min-w-0 items-center gap-3">
-            <div className="glass-mint flex h-10 w-10 shrink-0 items-center justify-center rounded-xl">
-              <Film className="h-5 w-5 text-mint-300" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-surface-elevated-dark">
+              <Film className="h-5 w-5 text-on-primary" />
             </div>
             <div className="min-w-0">
-              <p className="truncate font-semibold text-paper">
+              <p className="truncate font-medium text-on-primary">
                 {t("trailer.watch", { title })}
               </p>
-              <p className="text-xs text-ash">
+              <p className="text-xs text-shade-40">
                 {mediaType === "tv" ? t("common.tvSeries") : t("common.movie")}{" "}
                 • {t("trailer.official")}
               </p>
@@ -100,16 +100,16 @@ export function TrailerModal({
         </div>
 
         {/* Body */}
-        <div className="relative aspect-video w-full bg-ink-deep">
+        <div className="relative aspect-video w-full bg-canvas-night">
           {loading ? (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-              <Loader2 className="h-10 w-10 animate-spin-slow text-mint-400" />
-              <p className="text-sm text-ash">{t("trailer.loading")}</p>
+              <Loader2 className="h-10 w-10 animate-spin-slow text-on-primary" />
+              <p className="text-sm text-shade-40">{t("trailer.loading")}</p>
             </div>
           ) : error ? (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center">
-              <Clapperboard className="h-10 w-10 text-mint-500/40" />
-              <p className="text-sm text-ash">{error}</p>
+              <Clapperboard className="h-10 w-10 text-shade-70" />
+              <p className="text-sm text-shade-40">{error}</p>
             </div>
           ) : videoKey ? (
             <iframe
@@ -123,7 +123,7 @@ export function TrailerModal({
           ) : null}
         </div>
 
-        <p className="flex items-center justify-center gap-1.5 px-5 py-3 text-center text-xs text-ash-dim">
+        <p className="flex items-center justify-center gap-1.5 px-5 py-3 text-center text-xs text-shade-50">
           <Video className="h-3.5 w-3.5" />
           {t("player.escToClose")}
         </p>

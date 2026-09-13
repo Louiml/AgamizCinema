@@ -47,7 +47,7 @@ function RouteSeo() {
       return (
         <Helmet>
           <title>Agamiz Cinema — Watch Movies & TV Shows Online</title>
-          <meta name="description" content="Discover trending movies, popular TV series, and watch them instantly on Agamiz Cinema. The sleek glassmorphic streaming experience — no sign-up required." />
+          <meta name="description" content="Discover trending movies, popular TV series, and watch them instantly on Agamiz Cinema. A cinematic streaming experience — no sign-up required." />
           <meta property="og:title" content="Agamiz Cinema — Watch Movies & TV Shows Online" />
           <meta property="og:description" content="Discover trending movies, popular TV series, and watch them instantly on Agamiz Cinema. No sign-up required." />
           <meta property="og:type" content="website" />
@@ -95,12 +95,22 @@ function PageRouter() {
     document.documentElement.dataset.glass = settings.glassOpacity;
   }, [settings.glassOpacity]);
 
+  useEffect(() => {
+    document.documentElement.dataset.theme = settings.theme;
+  }, [settings.theme]);
+
+  // Global Light/Dark mode — drives the whole app's canvas (not per-route).
+  const canvas = settings.themeMode === "light" ? "cream" : "night";
+  useEffect(() => {
+    document.documentElement.dataset.canvas = canvas;
+  }, [canvas]);
+
   return (
     <div className="flex min-h-screen flex-col">
       <RouteSeo />
 
-      <TitleBar route={route} navigate={navigate} />
-      <MobileHeader navigate={navigate} />
+      <TitleBar route={route} navigate={navigate} canvas={canvas} />
+      <MobileHeader navigate={navigate} canvas={canvas} />
 
       <main className="mx-auto w-full max-w-[90rem] flex-1 px-4 py-8 pb-32 sm:px-6 lg:px-8 md:pb-10">
         <div key={route} className="animate-fade-in">
@@ -113,7 +123,13 @@ function PageRouter() {
         </div>
       </main>
 
-      <footer className="border-t border-white/[0.05] py-8 pb-28 text-center text-xs text-ash-dim md:pb-8">
+      <footer
+        className={`py-8 pb-28 text-center text-xs md:pb-8 ${
+          canvas === "cream"
+            ? "border-t border-hairline-light text-shade-50"
+            : "border-t border-white/[0.05] text-shade-50"
+        }`}
+      >
         <div className="mb-4 flex justify-center gap-2">
           <ExternalLinks />
           <LegalDisclaimer />
@@ -127,7 +143,7 @@ function PageRouter() {
       <MediaDetailsModal />
       <InstallBanner />
       <ToastViewport />
-      <BottomNav route={route} navigate={navigate} />
+      <BottomNav route={route} navigate={navigate} canvas={canvas} />
     </div>
   );
 }

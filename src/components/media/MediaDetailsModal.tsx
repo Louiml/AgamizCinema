@@ -31,8 +31,8 @@ import { ActorProfileModal } from "@/components/actor/ActorProfileModal";
 
 function MetaChip({ icon: Icon, text }: { icon: LucideIcon; text: string }) {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1 text-xs font-medium text-ash backdrop-blur-md">
-      <Icon className="h-3.5 w-3.5 text-mint-400" />
+    <span className="inline-flex items-center gap-1.5 rounded-pill border border-white/[0.08] bg-white/[0.04] px-3 py-1 text-xs font-medium text-shade-40">
+      <Icon className="h-3.5 w-3.5 text-on-primary" />
       {text}
     </span>
   );
@@ -169,19 +169,19 @@ export function MediaDetailsModal() {
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-ink-deep/75 px-4 py-6 backdrop-blur-sm animate-fade-in"
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/75 px-4 py-6 animate-fade-in"
       onClick={close}
     >
       <AmbientGlow imageUrl={glowImage} />
       <div
-        className="glass-panel relative flex max-h-[88vh] w-full max-w-3xl flex-col overflow-hidden rounded-3xl shadow-pop animate-scale-in"
+        className="surface-dark relative flex max-h-[88vh] w-full max-w-3xl flex-col overflow-hidden rounded-lg shadow-elev-4 animate-scale-in"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close */}
         <button
           onClick={close}
           aria-label={t("common.close")}
-          className="btn-icon absolute end-3 top-3 z-10 h-9 w-9 bg-ink-deep/50"
+          className="btn-icon absolute end-3 top-3 z-10 h-9 w-9 bg-black/40"
         >
           <X className="h-4 w-4" />
         </button>
@@ -191,17 +191,17 @@ export function MediaDetailsModal() {
           {heroImage ? (
             <img src={heroImage} alt={title} className="h-full w-full object-cover" />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-ink-float to-ink-deep">
+            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-canvas-night-elevated to-canvas-night">
               {isTV ? (
-                <Clapperboard className="h-14 w-14 text-mint-500/40" />
+                <Clapperboard className="h-14 w-14 text-shade-70" />
               ) : (
-                <Film className="h-14 w-14 text-mint-500/40" />
+                <Film className="h-14 w-14 text-shade-70" />
               )}
             </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-canvas-night-elevated via-canvas-night/40 to-transparent" />
           <div className="absolute inset-x-5 bottom-4 flex flex-wrap items-center gap-2.5 sm:inset-x-8">
-            <span className="glass-mint rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-mint-300">
+            <span className="pill-tag-shade-dark">
               {isTV ? t("common.tvSeries") : t("common.movie")}
             </span>
             <RatingBadge rating={details?.vote_average ?? media.voteAverage} />
@@ -210,9 +210,9 @@ export function MediaDetailsModal() {
 
         {/* Body */}
         <div className="flex-1 overflow-y-auto p-5 pt-5 sm:p-8">
-          <h2 className="heading-display text-2xl text-paper sm:text-3xl">{title}</h2>
+          <h2 className="heading-display text-2xl text-on-primary sm:text-3xl">{title}</h2>
           {details?.tagline && (
-            <p className="mt-1.5 text-sm italic text-ash">{details.tagline}</p>
+            <p className="mt-1.5 text-sm italic text-shade-40">{details.tagline}</p>
           )}
 
           {meta.length > 0 && (
@@ -234,16 +234,16 @@ export function MediaDetailsModal() {
           )}
 
           {loading ? (
-            <div className="mt-6 flex items-center gap-3 text-sm text-ash">
-              <Loader2 className="h-5 w-5 animate-spin-slow text-mint-400" />
+            <div className="mt-6 flex items-center gap-3 text-sm text-shade-40">
+              <Loader2 className="h-5 w-5 animate-spin-slow text-on-primary" />
               {t("details.loading")}
             </div>
           ) : error ? (
-            <div className="mt-6 rounded-2xl border border-rose-400/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-300">
+            <div className="mt-6 rounded-md border border-rose-400/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-300">
               {error}
             </div>
           ) : (
-            <p className="mt-6 max-w-2xl text-sm leading-relaxed text-paper/80 sm:text-base">
+            <p className="mt-6 max-w-2xl text-sm leading-relaxed text-on-primary/80 sm:text-base">
               {details?.overview || t("home.noSynopsis")}
             </p>
           )}
@@ -251,9 +251,7 @@ export function MediaDetailsModal() {
           {/* Cast */}
           {cast.length > 0 && (
             <div className="mt-7">
-              <h3 className="mb-3 text-sm font-semibold uppercase tracking-widest text-ash">
-                {t("details.cast")}
-              </h3>
+              <h3 className="eyebrow mb-3">{t("details.cast")}</h3>
               <div className="no-scrollbar -mx-1 flex gap-3 overflow-x-auto px-1 pb-1">
                 {cast.map((person) => (
                   <button
@@ -262,7 +260,7 @@ export function MediaDetailsModal() {
                     className="group w-[88px] shrink-0 text-center transition-all duration-ui ease-spring hover:-translate-y-0.5"
                     title={t("details.viewProfile", { name: person.name })}
                   >
-                    <div className="relative mx-auto h-[110px] w-[88px] overflow-hidden rounded-xl bg-white/[0.04] transition-all duration-ui group-hover:border-mint-500/40 group-hover:shadow-glow-soft">
+                    <div className="relative mx-auto h-[110px] w-[88px] overflow-hidden rounded-md bg-white/[0.04] transition-all duration-ui group-hover:border-on-primary/40">
                       {person.profile_path ? (
                         <img
                           src={posterUrl(person.profile_path, "w185") ?? undefined}
@@ -271,16 +269,16 @@ export function MediaDetailsModal() {
                           className="h-full w-full object-cover transition-transform duration-surface ease-spring group-hover:scale-105"
                         />
                       ) : (
-                        <div className="flex h-full items-center justify-center text-ash-dim">
+                        <div className="flex h-full items-center justify-center text-shade-50">
                           <User className="h-6 w-6" />
                         </div>
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-ink/60 to-transparent opacity-0 transition-opacity duration-ui group-hover:opacity-100" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-canvas-night/60 to-transparent opacity-0 transition-opacity duration-ui group-hover:opacity-100" />
                     </div>
-                    <p className="mt-1.5 truncate text-xs font-medium text-paper group-hover:text-mint-300">
+                    <p className="mt-1.5 truncate text-xs font-medium text-on-primary group-hover:text-on-primary">
                       {person.name}
                     </p>
-                    <p className="truncate text-[10px] text-ash">{person.character ?? ""}</p>
+                    <p className="truncate text-[10px] text-shade-40">{person.character ?? ""}</p>
                   </button>
                 ))}
               </div>
@@ -290,8 +288,8 @@ export function MediaDetailsModal() {
           {/* More Like This */}
           {recommendations.length > 0 && (
             <div className="mt-7">
-              <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-ash">
-                <Sparkles className="h-4 w-4 text-mint-400" />
+              <h3 className="eyebrow mb-3 flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-on-primary" />
                 {t("details.moreLikeThis")}
               </h3>
               <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
@@ -304,17 +302,17 @@ export function MediaDetailsModal() {
 
           {/* Actions */}
           <div className="mt-7 flex flex-wrap items-center gap-3">
-            <button onClick={handlePlay} className="btn-mint px-7 py-3">
+            <button onClick={handlePlay} className="btn-primary-pill px-7 py-3">
               <Play className="h-5 w-5" fill="currentColor" />
               {isTV ? t("home.playSeries") : t("home.watchNow")}
             </button>
-            <button onClick={() => setTrailerOpen(true)} className="btn-glass px-6 py-3">
+            <button onClick={() => setTrailerOpen(true)} className="btn-outline-on-dark px-6 py-3">
               <Film className="h-5 w-5" /> {t("player.trailer")}
             </button>
             <button
               onClick={handleWatchlist}
-              className={`btn-glass px-6 py-3 ${
-                saved ? "border-mint-500/40 bg-mint-500/15 text-mint-300" : ""
+              className={`btn-outline-on-dark px-6 py-3 ${
+                saved ? "bg-on-primary/15" : ""
               }`}
             >
               {saved ? (

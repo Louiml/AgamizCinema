@@ -1,7 +1,7 @@
 export function Spinner({ className = "" }: { className?: string }) {
   return (
     <svg
-      className={`h-8 w-8 animate-spin-slow text-mint-400 ${className}`}
+      className={`h-8 w-8 animate-spin-slow text-on-primary ${className}`}
       viewBox="0 0 24 24"
       fill="none"
       aria-label="Loading"
@@ -27,17 +27,17 @@ export function Spinner({ className = "" }: { className?: string }) {
 export function PageLoader({ label = "Loading" }: { label?: string }) {
   return (
     <div className="flex flex-col items-center justify-center gap-4 py-24">
-      <div className="glass-panel rounded-3xl p-6 shadow-glow-soft">
+      <div className="surface-dark rounded-lg p-6">
         <Spinner className="h-9 w-9" />
       </div>
-      <p className="text-sm text-ash">{label}…</p>
+      <p className="text-sm text-shade-40">{label}…</p>
     </div>
   );
 }
 
 export function SkeletonCard() {
   return (
-    <div className="glass-card animate-pulse overflow-hidden rounded-2xl">
+    <div className="surface-dark animate-pulse overflow-hidden rounded-lg">
       <div className="aspect-[2/3] bg-white/[0.04]" />
       <div className="space-y-2 p-3">
         <div className="h-3 w-3/4 rounded bg-white/10" />

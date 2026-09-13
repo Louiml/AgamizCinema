@@ -18,7 +18,7 @@ export function ExternalLinks({ className = "" }: ExternalLinksProps) {
     <div className={`flex items-center gap-2 ${className}`}>
       <button
         onClick={() => void openExternal(APPS_URL)}
-        className="flex items-center gap-1.5 rounded-xl bg-mint-500 px-3 py-2 text-xs font-semibold text-ink shadow-glow-soft transition-all duration-ui ease-spring hover:brightness-110 active:scale-95 active:duration-press"
+        className="flex items-center gap-1.5 rounded-pill bg-contrast px-3 py-2 text-xs font-medium text-on-contrast transition-all duration-ui ease-spring hover:brightness-95 active:scale-95 active:duration-press"
         title={t("external.downloadApp")}
       >
         <MonitorDown className="h-4 w-4" />

@@ -15,7 +15,7 @@ interface HeroCarouselProps {
   genreMap?: Map<string, string>;
 }
 
-const SLIDE_MS = 8000;
+const SLIDE_MS = 5000;
 
 function usePrefersReducedMotion() {
   const [reduced, setReduced] = useState(false);
@@ -98,7 +98,7 @@ export function HeroCarousel({ items, genreMap }: HeroCarouselProps) {
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
     >
-      <div className="relative h-[70vh] max-h-[640px] min-h-[420px] w-full overflow-hidden sm:rounded-3xl">
+      <div className="relative h-[70vh] max-h-[640px] min-h-[420px] w-full overflow-hidden sm:rounded-xl">
         {/* Stacked crossfading backdrops */}
         {slides.map((m, i) => (
           <div
@@ -113,7 +113,7 @@ export function HeroCarousel({ items, genreMap }: HeroCarouselProps) {
                 alt=""
                 draggable={false}
                 onLoad={() => setLoaded((p) => ({ ...p, [i]: true }))}
-                className={`h-full w-full object-cover transition-transform duration-[8000ms] ease-linear ${
+                className={`h-full w-full object-cover transition-transform duration-[5000ms] ease-linear ${
                   i === index && !paused && !reduced ? "scale-105" : "scale-100"
                 } ${loaded[i] ? "opacity-100" : "opacity-0"}`}
               />
@@ -123,40 +123,40 @@ export function HeroCarousel({ items, genreMap }: HeroCarouselProps) {
 
         {/* Ambient + gradients */}
         <AmbientGlow imageUrl={active.backdropPath} opacity={0.5} />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/45 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-ink/95 via-ink/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-canvas-night via-canvas-night/45 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-canvas-night/95 via-canvas-night/40 to-transparent" />
 
         {/* Content — keyed so it re-animates per slide */}
         <div className="relative flex h-full flex-col justify-end px-5 pb-10 pt-32 sm:px-10 lg:px-14">
           <div key={active.id} className="max-w-2xl animate-fade-in-up">
             <div className="mb-3 flex flex-wrap items-center gap-2.5">
-              <span className="glass-mint rounded px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-mint-300">
+              <span className="eyebrow rounded-xs bg-accent/15 px-2.5 py-1 text-accent">
                 {isTV ? t("home.trendingSeries") : t("home.trendingNow")}
               </span>
               <RatingBadge rating={active.voteAverage} />
-              <span className="text-sm font-medium text-ash">{year}</span>
+              <span className="text-sm font-medium text-shade-40">{year}</span>
             </div>
 
-            <h1 className="heading-display text-3xl leading-tight text-white drop-shadow-lg sm:text-5xl lg:text-6xl">
+            <h1 className="heading-display text-3xl leading-tight text-on-primary sm:text-5xl lg:text-6xl">
               {active.title}
             </h1>
 
             {heroGenres.length > 0 && (
               <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1">
                 {heroGenres.map((g) => (
-                  <span key={g} className="text-xs font-medium tracking-wide text-mint-300/80">
+                  <span key={g} className="text-xs font-medium tracking-wide text-shade-40">
                     {g}
                   </span>
                 ))}
               </div>
             )}
 
-            <p className="mt-4 max-w-xl text-sm leading-relaxed text-paper/75 sm:text-base [display:-webkit-box] [-webkit-line-clamp:3] [-webkit-box-orient:vertical] overflow-hidden">
+            <p className="mt-4 max-w-xl text-sm leading-relaxed text-on-primary/75 sm:text-base [display:-webkit-box] [-webkit-line-clamp:3] [-webkit-box-orient:vertical] overflow-hidden">
               {active.overview || t("home.noSynopsis")}
             </p>
 
             <div className="mt-6 flex flex-wrap items-center gap-3">
-              <button onClick={handlePlay} className="btn-mint px-7 py-3 text-base">
+              <button onClick={handlePlay} className="btn-primary-pill px-7 py-3 text-base">
                 <Play className="h-5 w-5" fill="currentColor" />
                 {t("home.watchNow")}
               </button>
@@ -168,8 +168,8 @@ export function HeroCarousel({ items, genreMap }: HeroCarouselProps) {
                     tone: "success",
                   });
                 }}
-                className={`btn-glass px-6 py-3 text-base ${
-                  saved ? "border-mint-500/40 bg-mint-500/15 text-mint-300" : ""
+                className={`btn-outline-on-dark px-6 py-3 text-base ${
+                  saved ? "bg-on-primary/15" : ""
                 }`}
               >
                 {saved ? (
@@ -202,10 +202,10 @@ export function HeroCarousel({ items, genreMap }: HeroCarouselProps) {
                 onClick={() => go(i)}
                 aria-label={`${i + 1}`}
                 aria-current={i === index}
-                className="group h-1.5 w-8 overflow-hidden rounded-full bg-white/20 transition-all duration-ui ease-spring sm:w-10"
+                className="group h-1.5 w-8 overflow-hidden rounded-pill bg-white/20 transition-all duration-ui ease-spring sm:w-10"
               >
                 <span
-                  className="block h-full rounded-full bg-mint-400"
+                  className="block h-full rounded-pill bg-accent"
                   style={
                     i === index && !paused && !reduced
                       ? { animation: `heroProgress ${SLIDE_MS}ms linear forwards` }
@@ -221,7 +221,7 @@ export function HeroCarousel({ items, genreMap }: HeroCarouselProps) {
       </div>
 
       {/* Decorative bottom fade into the page */}
-      <div className="pointer-events-none absolute -bottom-6 left-0 right-0 h-12 bg-gradient-to-t from-ink to-transparent" />
+      <div className="pointer-events-none absolute -bottom-6 left-0 right-0 h-12 bg-gradient-to-t from-canvas-night to-transparent" />
 
       <style>{`@keyframes heroProgress { from { width: 0% } to { width: 100% } }`}</style>
     </section>

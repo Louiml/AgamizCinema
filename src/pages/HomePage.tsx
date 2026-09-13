@@ -4,10 +4,8 @@ import { TrendingUp, Flame, Sparkles, History, PlayCircle, Clapperboard, Calenda
 import { tmdb, posterUrl, backdropUrl } from "@/services/tmdb";
 import { useAsync } from "@/hooks/useAsync";
 import { useHistory } from "@/providers/HistoryProvider";
-import { useSettings } from "@/providers/SettingsProvider";
 import { HeroCarousel } from "@/components/home/HeroCarousel";
 import { TopTenRow } from "@/components/home/TopTenRow";
-import { AdBanner } from "@/components/ads/AdBanner";
 import { MediaRow } from "@/components/media/MediaRow";
 import { historyToNormalized } from "@/lib/media";
 import { PageLoader } from "@/components/ui/Spinner";
@@ -19,7 +17,6 @@ export function HomePage() {
   const { t, i18n } = useTranslation();
   const language = i18n.language;
   const { items: history } = useHistory();
-  const { settings: { showAds } } = useSettings();
 
   const { data: trending, loading: trendingLoading } = useAsync(
     () => tmdb.trending(),
@@ -134,10 +131,8 @@ export function HomePage() {
   }
 
   return (
-    <div className="space-y-12 pb-10">
+    <div className="space-y-16 pb-10">
       {trending && trending.length > 0 && <HeroCarousel items={trending} genreMap={genreMap ?? undefined} />}
-
-      {showAds && <AdBanner />}
 
       {continueWatching.length > 0 && (
         <MediaRow

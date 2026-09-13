@@ -76,11 +76,11 @@ export function MediaRow({
     <section className="relative animate-fade-in-up">
       <div className="mb-4 flex items-end justify-between gap-4">
         <div>
-          <h2 className="heading-display flex items-center gap-2.5 text-lg text-paper sm:text-xl">
-            {icon && <span className="text-mint-400">{icon}</span>}
+          <h2 className="heading-display flex items-center gap-2.5 text-lg text-on-primary sm:text-xl">
+            {icon && <span className="text-on-primary">{icon}</span>}
             {title}
           </h2>
-          {subtitle && <p className="mt-1 text-sm text-ash">{subtitle}</p>}
+          {subtitle && <p className="mt-1 text-sm text-shade-40">{subtitle}</p>}
         </div>
 
         {hasMedia && (
@@ -112,8 +112,8 @@ export function MediaRow({
           ))}
         </div>
       ) : error ? (
-        <div className="glass-panel flex flex-col items-center gap-3 rounded-3xl px-6 py-10 text-center">
-          <p className="text-sm text-ash">{error}</p>
+        <div className="surface-dark flex flex-col items-center gap-3 rounded-lg px-6 py-10 text-center">
+          <p className="text-sm text-shade-40">{error}</p>
           {onRetry && (
             <button onClick={onRetry} className="btn-glass text-sm">
               {t("common.retry")}
@@ -121,7 +121,7 @@ export function MediaRow({
           )}
         </div>
       ) : !hasMedia ? (
-        <div className="glass-panel rounded-3xl px-6 py-10 text-center text-sm text-ash">
+        <div className="surface-dark rounded-lg px-6 py-10 text-center text-sm text-shade-40">
           {t("common.nothingHere")}
         </div>
       ) : (

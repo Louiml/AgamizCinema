@@ -1,6 +1,6 @@
 [package]
 name = "agamiz-cinema"
-version = "1.0.1"
+version = "2.0.0"
 description = "Agamiz Cinema — Rust backend bindings (local persistence + TMDB proxy)"
 authors = ["Agamiz"]
 edition = "2021"

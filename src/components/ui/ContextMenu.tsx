@@ -99,7 +99,7 @@ export function ContextMenu({ state, onClose }: ContextMenuProps) {
         e.preventDefault();
         e.stopPropagation();
       }}
-      className="glass-panel fixed z-[90] w-56 origin-top-left animate-scale-in rounded-2xl p-1.5 shadow-pop"
+      className="surface-dark fixed z-[90] w-56 origin-top-left animate-scale-in rounded-md p-1.5 shadow-elev-4"
     >
       {state.items.map((item) => {
         const Icon = item.icon;
@@ -109,12 +109,12 @@ export function ContextMenu({ state, onClose }: ContextMenuProps) {
             role="menuitem"
             disabled={item.disabled}
             onClick={() => handleItem(item)}
-            className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-sm font-medium transition-colors duration-150 ${
+            className={`flex w-full items-center gap-2.5 rounded-xs px-3 py-2 text-left text-sm font-medium transition-colors duration-150 ${
               item.disabled
-                ? "cursor-default text-ash-dim"
+                ? "cursor-default text-shade-50"
                 : item.destructive
                   ? "text-rose-300 hover:bg-rose-500/15"
-                  : "text-paper hover:bg-white/10"
+                  : "text-on-primary hover:bg-white/10"
             }`}
           >
             {Icon && <Icon className="h-4 w-4 shrink-0" />}

@@ -1,7 +1,7 @@
 {
   "name": "agamiz-cinema",
   "private": true,
-  "version": "1.0.1",
+  "version": "2.0.0",
   "type": "module",
   "description": "Agamiz Cinema — a modern, glassmorphic streaming web app. React + Vite + TypeScript + Tailwind + Rust (Tauri).",
   "scripts": {
@@ -21,6 +21,7 @@
     "@tauri-apps/api": "^2.1.1",
     "@tauri-apps/plugin-dialog": "^2.7.2",
     "@tauri-apps/plugin-opener": "^2.5.4",
+    "flag-icons": "^7.5.0",
     "i18next": "^26.3.6",
     "lucide-react": "^0.462.0",
     "peerjs": "^1.5.5",
