@@ -14,6 +14,7 @@ import { InstallBanner } from "@/components/ui/InstallBanner";
 import { ExternalLinks } from "@/components/ui/ExternalLinks";
 import { LegalDisclaimer } from "@/components/ui/LegalDisclaimer";
 import { ToastViewport } from "@/components/ui/ToastViewport";
+import { UpdateChecker } from "@/components/ui/UpdateChecker";
 
 const HomePage = lazy(() => import("@/pages/HomePage").then((m) => ({ default: m.HomePage })));
 const DiscoverPage = lazy(() => import("@/pages/DiscoverPage").then((m) => ({ default: m.DiscoverPage })));
@@ -30,9 +31,9 @@ function RouteSeo() {
     return (
       <Helmet>
         <title>{media.title} ({label}) · Agamiz Cinema</title>
-        <meta name="description" content={`Watch ${media.title} — a ${label.toLowerCase()} on Agamiz Cinema.`} />
+        <meta name="description" content={`Watch ${media.title} - a ${label.toLowerCase()} on Agamiz Cinema.`} />
         <meta property="og:title" content={`${media.title} (${label}) · Agamiz Cinema`} />
-        <meta property="og:description" content={`Watch ${media.title} — a ${label.toLowerCase()} on Agamiz Cinema.`} />
+        <meta property="og:description" content={`Watch ${media.title} - a ${label.toLowerCase()} on Agamiz Cinema.`} />
         <meta property="og:type" content={media.mediaType === "tv" ? "tv_show" : "video.movie"} />
         <meta property="og:url" content={`https://cinema.agamiz.com/#/home?media=${media.id}&type=${media.mediaType}`} />
         {ogImage && <meta property="og:image" content={ogImage} />}
@@ -99,7 +100,7 @@ function PageRouter() {
     document.documentElement.dataset.theme = settings.theme;
   }, [settings.theme]);
 
-  // Global Light/Dark mode — drives the whole app's canvas (not per-route).
+  // Global Light/Dark mode - drives the whole app's canvas (not per-route).
   const canvas = settings.themeMode === "light" ? "cream" : "night";
   useEffect(() => {
     document.documentElement.dataset.canvas = canvas;
@@ -143,6 +144,7 @@ function PageRouter() {
       <MediaDetailsModal />
       <InstallBanner />
       <ToastViewport />
+      <UpdateChecker />
       <BottomNav route={route} navigate={navigate} canvas={canvas} />
     </div>
   );

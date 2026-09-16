@@ -6,7 +6,7 @@ interface LogoProps {
  * Agamiz Cinema logo. A rounded "screen" with a play triangle, drawn with
  * `currentColor` so it inherits the active theme's accent color from its
  * parent (`text-accent`). The screen frame is 30% opacity, the play
- * triangle is full opacity — the focus is the play, the frame is context.
+ * triangle is full opacity - the focus is the play, the frame is context.
  */
 export function Logo({ className = "" }: LogoProps) {
   return (

@@ -37,7 +37,7 @@ interface HistoryContextValue {
   remove: (id: number, mediaType: MediaRef["mediaType"]) => void;
   clear: () => void;
   replace: (items: HistoryItem[]) => void;
-  /** Items that have progress > 0 but < 98 — used for Continue Watching. */
+  /** Items that have progress > 0 but < 98 - used for Continue Watching. */
   continueWatching: HistoryItem[];
 }
 

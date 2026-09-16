@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { BookOpen, ChevronDown, RefreshCw } from "lucide-react";
 import {
-  mangaSupported,
   mangaTags,
   mangaLangFor,
   searchManga,
@@ -16,7 +15,6 @@ import { MangaReader } from "@/components/manga/MangaReader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { RowSkeleton } from "@/components/ui/Spinner";
 import { GlassSelect } from "@/components/ui/GlassSelect";
-import { isTauri } from "@/services/tauri";
 
 type MangaSort = "followedCount" | "rating" | "year" | "latest";
 
@@ -39,7 +37,6 @@ export function DiscoverManga() {
   const [chaptersCache, setChaptersCache] = useState<MangaChapter[]>([]);
 
   useEffect(() => {
-    if (!mangaSupported()) return;
     mangaTags()
       .then(setTags)
       .catch(() => undefined);
@@ -60,7 +57,7 @@ export function DiscoverManga() {
   );
 
   useEffect(() => {
-    if (!mangaSupported()) return;
+
     let cancelled = false;
     setLoading(true);
     setError(null);
@@ -121,17 +118,6 @@ export function DiscoverManga() {
     setChaptersCache(chapters);
     setReaderChapter({ manga: m, chapter });
   };
-
-  // Web / mobile: manga is desktop-only.
-  if (!isTauri()) {
-    return (
-      <EmptyState
-        icon={BookOpen}
-        title={t("manga.desktopOnlyTitle")}
-        description={t("manga.desktopOnlyDesc")}
-      />
-    );
-  }
 
   return (
     <div className="space-y-5">

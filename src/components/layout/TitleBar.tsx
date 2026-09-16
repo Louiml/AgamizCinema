@@ -163,7 +163,7 @@ export function TitleBar({ route, navigate, canvas }: TitleBarProps) {
           <button
             onClick={() => navigate("home")}
             className="group flex shrink-0 items-center gap-2.5"
-            aria-label="Agamiz Cinema — Home"
+            aria-label="Agamiz Cinema - Home"
           >
             <span
               className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent/10 transition-transform duration-ui ease-spring group-hover:scale-105 group-active:scale-95"
@@ -179,7 +179,7 @@ export function TitleBar({ route, navigate, canvas }: TitleBarProps) {
             </span>
           </button>
 
-          {/* Nav links (desktop) — segmented pill group */}
+          {/* Nav links (desktop) - segmented pill group */}
           <nav
             data-tauri-drag-region
             className={`hidden items-center gap-1 rounded-pill p-1 md:flex ${

@@ -30,11 +30,13 @@ export function WatchTogetherPanel({
   const [joinInput, setJoinInput] = useState("");
   const [copied, setCopied] = useState(false);
   const copyTimer = useRef<number | null>(null);
+  // Playback state the desktop sync bridge reports from inside the embed.
+  const embedStateRef = useRef({ playing: false, currentTime: 0, duration: 0 });
 
   const watch = useWatchTogether({
     mediaId: mediaKey ?? null,
     getVideo: () => video ?? null,
-    getPlayer: () => buildController(video, iframeRef),
+    getPlayer: () => buildController(video, iframeRef, embedStateRef),
     onCommand: (command) => {
       iframeRef?.current?.contentWindow?.postMessage({ ...command }, "*");
     },
@@ -57,12 +59,33 @@ export function WatchTogetherPanel({
   const emitRef = useRef(watch.emit);
   emitRef.current = watch.emit;
 
+  // Bridge events from the embed frame (the injected sync script reports
+  // play/pause/seek back to the parent). The host re-broadcasts them to all
+  // guests; guests are blocked from emitting by the role check.
   useEffect(() => {
     const onMessage = (event: MessageEvent) => {
-      const msg = event.data as { __watch?: boolean; type?: string };
-      if (!msg || msg.__watch !== true) return;
-      if (msg.type === "PLAY" || msg.type === "PAUSE" || msg.type === "SEEK") {
-        emitRef.current(msg.type);
+      const msg = event.data as {
+        __watch?: boolean;
+        __agamizEvent?: boolean;
+        type?: string;
+        time?: number;
+        duration?: number;
+        playing?: boolean;
+      };
+      if (!msg) return;
+      const t = msg.type;
+      const isTransport =
+        t === "PLAY" || t === "PAUSE" || t === "SEEK" ? (t as "PLAY" | "PAUSE" | "SEEK") : null;
+      if (!isTransport) return;
+      if (msg.__watch === true) {
+        emitRef.current(isTransport);
+        return;
+      }
+      if (msg.__agamizEvent === true) {
+        if (typeof msg.time === "number") embedStateRef.current.currentTime = msg.time;
+        if (typeof msg.duration === "number") embedStateRef.current.duration = msg.duration;
+        if (typeof msg.playing === "boolean") embedStateRef.current.playing = msg.playing;
+        emitRef.current(isTransport);
       }
     };
     window.addEventListener("message", onMessage);
@@ -85,7 +108,7 @@ export function WatchTogetherPanel({
       if (copyTimer.current) window.clearTimeout(copyTimer.current);
       copyTimer.current = window.setTimeout(() => setCopied(false), 1600);
     } catch {
-      /* clipboard unavailable — ignore */
+      /* clipboard unavailable - ignore */
     }
   };
 
@@ -156,6 +179,13 @@ export function WatchTogetherPanel({
             </div>
           )}
 
+          {/* Guests: the host drives playback */}
+          {watch.status.phase === "ready" && !watch.isHost && (
+            <div className="rounded-md border border-hairline-light bg-accent/10 px-3 py-2.5 text-center text-xs text-accent">
+              {t("watchTogether.hostControls")}
+            </div>
+          )}
+
           {/* Idle / create or join */}
           {watch.status.phase === "idle" && (
             <>
@@ -202,17 +232,21 @@ export function WatchTogetherPanel({
 function buildController(
   video: HTMLVideoElement | null | undefined,
   iframeRef?: RefObject<HTMLIFrameElement | null>,
+  stateRef?: RefObject<{ playing: boolean; currentTime: number; duration: number }>,
 ): PlayerController | null {
   if (video) return createVideoPlayerController(video);
   const iframe = iframeRef?.current;
   if (!iframe?.contentWindow) return null;
-  const send = (type: "PLAY" | "PAUSE" | "SEEK") =>
-    iframe.contentWindow?.postMessage({ __watch: true, type }, "*");
+  const send = (type: "PLAY" | "PAUSE" | "SEEK", time?: number) =>
+    iframe.contentWindow?.postMessage({ __watch: true, type, time }, "*");
   return {
     play: () => send("PLAY"),
     pause: () => send("PAUSE"),
-    seekTo: () => send("SEEK"),
-    getSnapshot: () => ({ playing: false, currentTime: 0, duration: 0 }),
+    seekTo: (seconds) => send("SEEK", seconds),
+    getSnapshot: () =>
+      stateRef?.current
+        ? { ...stateRef.current }
+        : { playing: false, currentTime: 0, duration: 0 },
   };
 }
 

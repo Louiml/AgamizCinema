@@ -28,10 +28,21 @@ export interface DownloadFinishedPayload {
 
 export const downloadSupported = (): boolean => isTauri();
 
-/** Web/mobile: open the source's embed in a new tab. Synchronous so popup
- *  blockers don't kill it (must run inside the click handler). */
+/** Web/mobile: open the source's embed in a new tab. Runs synchronously in
+ *  the click handler so popup blockers don't kill it; falls back to a
+ *  synthetic anchor click if window.open is unavailable or blocked. */
 export function openInSource(url: string): void {
-  window.open(url, "_blank", "noopener,noreferrer");
+  const win = window.open(url, "_blank", "noopener,noreferrer");
+  if (!win) {
+    const a = document.createElement("a");
+    a.href = url;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
 }
 
 /** Desktop: opens (or focuses) a download window for a movie / TV episode. */

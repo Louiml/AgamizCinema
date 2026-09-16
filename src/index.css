@@ -30,7 +30,7 @@
     --accent-soft-on: 0 0 0;
     --accent-on: 0 0 0;
 
-    /* Fixed contrast pair (never flips) — for solid CTA pills. */
+    /* Fixed contrast pair (never flips) - for solid CTA pills. */
     --contrast: 0 0 0;
     --on-contrast: 255 255 255;
 
@@ -198,7 +198,7 @@
 }
 
 @layer components {
-  /* ── Surfaces — mode-aware (the active mode is set globally via [data-canvas]). */
+  /* ── Surfaces - mode-aware (the active mode is set globally via [data-canvas]). */
   .surface-dark,
   .surface-light {
     @apply bg-canvas-night-elevated;
@@ -251,7 +251,7 @@
     background-color: rgba(0, 0, 0, 0.08);
   }
 
-  /* Legacy glass-* aliases — resolve to the mode-aware surfaces. */
+  /* Legacy glass-* aliases - resolve to the mode-aware surfaces. */
   .glass-panel {
     @apply bg-canvas-night-elevated;
   }

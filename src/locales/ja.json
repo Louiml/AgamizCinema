@@ -20,7 +20,7 @@
     "next": "次へ",
     "retry": "再試行",
     "select": "選択…",
-    "nothingHere": "まだ何もありません — また後で。",
+    "nothingHere": "まだ何もありません - また後で。",
     "viewInfo": "詳細を見る",
     "movie": "映画",
     "tvSeries": "ドラマ"
@@ -63,11 +63,12 @@
   "search": {
     "loadingTrends": "入力して映画・ドラマを検索。",
     "noResults": "「{{query}}」の結果なし。",
-    "apiKeyHint": "{{message}} — TMDB APIキーを設定で確認してください。",
+    "apiKeyHint": "{{message}} - TMDB APIキーを設定で確認してください。",
     "failed": "検索に失敗しました",
     "recent": "最近の検索",
     "clearRecent": "履歴を消去",
-    "trending": "話題"
+    "trending": "話題",
+    "actors": "俳優"
   },
   "details": {
     "couldntLoad": "詳細を読み込めませんでした。",
@@ -93,7 +94,7 @@
     "cleared": "削除しました",
     "backupExported": "バックアップをエクスポートしました",
     "backupImported": "バックアップをインポートしました",
-    "backupImportFailed": "インポート失敗 — 不正なファイル",
+    "backupImportFailed": "インポート失敗 - 不正なファイル",
     "backupExportFailed": "エクスポート失敗",
     "joiningRoom": "視聴パーティーに参加中…",
     "roomJoined": "視聴パーティーに参加しました"
@@ -110,7 +111,7 @@
     "topFilmography": "主な作品"
   },
   "trailer": {
-    "watch": "予告編 — {{title}}",
+    "watch": "予告編 - {{title}}",
     "official": "TMDB公式予告編",
     "loading": "予告編を読み込み中…",
     "none": "このタイトルの予告編はまだありません。",
@@ -258,10 +259,12 @@
     "mangaReaderModeDesc": "スクロールは全ページ縦並び、ページは1枚ずつ。",
     "backupExported": "バックアップをエクスポートしました",
     "backupImported": "バックアップをインポートしました",
-    "backupImportFailed": "インポート失敗 — 不正なファイル",
+    "backupImportFailed": "インポート失敗 - 不正なファイル",
     "backupExportFailed": "エクスポート失敗",
     "mangaReadingDirection": "マンガの読む方向",
-    "mangaReadingDirectionDesc": "マンガは右から左、ウェブトゥーンは左から右。"
+    "mangaReadingDirectionDesc": "マンガは右から左、ウェブトゥーンは左から右。",
+    "blockPopups": "ポップアップをブロック",
+    "blockPopupsDesc": "プレーヤーがブラウザでポップアップ広告を開くのを防ぎます。"
   },
   "player": {
     "movie": "映画",
@@ -306,12 +309,12 @@
     "playTitle": "{{title}}を再生",
     "couldntLoadEpisodeData": "エピソードデータを読み込めませんでした。",
     "couldntLoadEpisodes": "エピソードを読み込めませんでした。",
-    "downloadFinished": "ダウンロード完了 — {{path}}",
+    "downloadFinished": "ダウンロード完了 - {{path}}",
     "downloadsFolder": "ダウンロードフォルダに保存",
     "downloadFailed": "ダウンロード失敗。",
-    "downloadError": "ダウンロードエラー — {{error}}",
+    "downloadError": "ダウンロードエラー - {{error}}",
     "openingDownload": "ダウンロードウィンドウを開いています…",
-    "downloadWindowOpened": "ダウンロードウィンドウを開きました — ファイルはダウンロードフォルダに保存されます。",
+    "downloadWindowOpened": "ダウンロードウィンドウを開きました - ファイルはダウンロードフォルダに保存されます。",
     "couldntOpenDownload": "ダウンロードウィンドウを開けませんでした。"
   },
   "watchTogether": {
@@ -335,7 +338,8 @@
     "pauseAll": "一時停止",
     "invalidRoom": "無効なルームリンクまたはID。",
     "roomNotFound": "ルームが見つかりません。",
-    "browserUnsupported": "このブラウザはWebRTCに対応していません。"
+    "browserUnsupported": "このブラウザはWebRTCに対応していません。",
+    "hostControls": "ホストが再生を操作します - 全員に同期されます。"
   },
   "install": {
     "title": "Agamiz Cinemaをインストール",
@@ -352,7 +356,7 @@
     "markEnd": "イントロ終了をマーク",
     "markedStart": "現在位置をイントロ開始にマークしました。",
     "markStartFirst": "まずイントロ開始を設定してください。",
-    "saved": "イントロを保存しました — 次回から自動的にスキップします。"
+    "saved": "イントロを保存しました - 次回から自動的にスキップします。"
   },
   "manga": {
     "loading": "読み込み中…",
@@ -407,5 +411,11 @@
     "ltr": "LTR",
     "resetZoom": "リセット",
     "tapHint": "めくる · F 非表示 · Esc 終了"
+  },
+  "update": {
+    "title": "バージョン {{version}} がリリースされました",
+    "desc": "新しいAgamiz Cinemaが利用可能です。GitHubからダウンロードしてください。",
+    "download": "アップデートを入手",
+    "later": "また後で"
   }
 }

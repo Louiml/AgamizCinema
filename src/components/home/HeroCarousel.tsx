@@ -73,7 +73,7 @@ export function HeroCarousel({ items, genreMap }: HeroCarouselProps) {
   if (!active) return null;
 
   const isTV = active.mediaType === "tv";
-  const year = active.releaseDate?.slice(0, 4) ?? "—";
+  const year = active.releaseDate?.slice(0, 4) ?? "-";
   const saved = has(active.id, active.mediaType);
   const heroGenres = active.genreIds
     .map((id) => genreMap?.get(String(id)) ?? "")
@@ -126,7 +126,7 @@ export function HeroCarousel({ items, genreMap }: HeroCarouselProps) {
         <div className="absolute inset-0 bg-gradient-to-t from-canvas-night via-canvas-night/45 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-r from-canvas-night/95 via-canvas-night/40 to-transparent" />
 
-        {/* Content — keyed so it re-animates per slide */}
+        {/* Content - keyed so it re-animates per slide */}
         <div className="relative flex h-full flex-col justify-end px-5 pb-10 pt-32 sm:px-10 lg:px-14">
           <div key={active.id} className="max-w-2xl animate-fade-in-up">
             <div className="mb-3 flex flex-wrap items-center gap-2.5">

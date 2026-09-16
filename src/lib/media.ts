@@ -56,7 +56,7 @@ export function refToNormalized(m: MediaRef): NormalizedMedia {
 }
 
 export function formatDuration(minutes?: number): string {
-  if (!minutes) return "—";
+  if (!minutes) return "-";
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
   return h > 0 ? `${h}h ${m}m` : `${m}m`;

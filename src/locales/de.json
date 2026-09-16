@@ -20,7 +20,7 @@
     "next": "Weiter",
     "retry": "Erneut versuchen",
     "select": "Auswählen…",
-    "nothingHere": "Noch nichts hier — bald verfügbar.",
+    "nothingHere": "Noch nichts hier - bald verfügbar.",
     "viewInfo": "Info ansehen",
     "movie": "Film",
     "tvSeries": "Serie"
@@ -63,11 +63,12 @@
   "search": {
     "loadingTrends": "Tippe, um Filme & Serien zu durchsuchen.",
     "noResults": "Keine Ergebnisse für „{{query}}“.",
-    "apiKeyHint": "{{message}} — überprüfe deinen TMDB-API-Schlüssel in den Einstellungen.",
+    "apiKeyHint": "{{message}} - überprüfe deinen TMDB-API-Schlüssel in den Einstellungen.",
     "failed": "Suche fehlgeschlagen",
     "recent": "Letzte Suchen",
     "clearRecent": "Letzte Suchen löschen",
-    "trending": "Im Trend"
+    "trending": "Im Trend",
+    "actors": "Schauspieler"
   },
   "details": {
     "couldntLoad": "Details konnten nicht geladen werden.",
@@ -93,7 +94,7 @@
     "cleared": "Gelöscht",
     "backupExported": "Backup exportiert",
     "backupImported": "Backup importiert",
-    "backupImportFailed": "Import fehlgeschlagen — ungültige Datei",
+    "backupImportFailed": "Import fehlgeschlagen - ungültige Datei",
     "backupExportFailed": "Export fehlgeschlagen",
     "joiningRoom": "Watch-Party wird beigetreten…",
     "roomJoined": "Watch-Party beigetreten"
@@ -110,7 +111,7 @@
     "topFilmography": "Top Filmografie"
   },
   "trailer": {
-    "watch": "Trailer ansehen — {{title}}",
+    "watch": "Trailer ansehen - {{title}}",
     "official": "TMDB offizieller Trailer",
     "loading": "Trailer wird geladen…",
     "none": "Für diesen Titel ist noch kein Trailer verfügbar.",
@@ -256,12 +257,14 @@
     "cleanViewSettingDesc": "Bei Öffnen des Players Unordnung um das Video ausblenden.",
     "backupExported": "Backup exportiert",
     "backupImported": "Backup importiert",
-    "backupImportFailed": "Import fehlgeschlagen — ungültige Datei",
+    "backupImportFailed": "Import fehlgeschlagen - ungültige Datei",
     "backupExportFailed": "Export fehlgeschlagen",
     "mangaReaderMode": "Manga-Lesemodus",
     "mangaReaderModeDesc": "Scroll stapelt alle Seiten; Paged zeigt eine nach der anderen.",
     "mangaReadingDirection": "Manga-Leserichtung",
-    "mangaReadingDirectionDesc": "Rechts-nach-links für Manga, links-nach-rechts für Webtoons."
+    "mangaReadingDirectionDesc": "Rechts-nach-links für Manga, links-nach-rechts für Webtoons.",
+    "blockPopups": "Popups blockieren",
+    "blockPopupsDesc": "Hindert die Player-Quellen daran, im Browser Popup-Werbung zu öffnen."
   },
   "player": {
     "movie": "Film",
@@ -304,12 +307,12 @@
     "playTitle": "{{title}} abspielen",
     "couldntLoadEpisodeData": "Episodendaten konnten nicht geladen werden.",
     "couldntLoadEpisodes": "Episoden konnten nicht geladen werden.",
-    "downloadFinished": "Download abgeschlossen — {{path}}",
+    "downloadFinished": "Download abgeschlossen - {{path}}",
     "downloadsFolder": "im Downloads-Ordner gespeichert",
     "downloadFailed": "Download fehlgeschlagen.",
-    "downloadError": "Download-Fehler — {{error}}",
+    "downloadError": "Download-Fehler - {{error}}",
     "openingDownload": "Download-Fenster wird geöffnet…",
-    "downloadWindowOpened": "Download-Fenster geöffnet — Dateien werden im Downloads-Ordner gespeichert.",
+    "downloadWindowOpened": "Download-Fenster geöffnet - Dateien werden im Downloads-Ordner gespeichert.",
     "couldntOpenDownload": "Download-Fenster konnte nicht geöffnet werden.",
     "openInSource": "In Quelle öffnen",
     "openedInSource": "Quellplayer in neuem Tab geöffnet."
@@ -335,7 +338,8 @@
     "pauseAll": "Pause",
     "invalidRoom": "Ungültiger Raum-Link oder ID.",
     "roomNotFound": "Raum nicht gefunden.",
-    "browserUnsupported": "Dieser Browser unterstützt kein WebRTC."
+    "browserUnsupported": "Dieser Browser unterstützt kein WebRTC.",
+    "hostControls": "Der Host steuert die Wiedergabe - sie wird für alle synchronisiert."
   },
   "install": {
     "title": "Agamiz Cinema installieren",
@@ -352,7 +356,7 @@
     "markEnd": "Intro-Ende markieren",
     "markedStart": "Intro-Start an aktueller Position markiert.",
     "markStartFirst": "Zuerst Intro-Start festlegen.",
-    "saved": "Intro gespeichert — es wird beim nächsten Mal automatisch übersprungen."
+    "saved": "Intro gespeichert - es wird beim nächsten Mal automatisch übersprungen."
   },
   "manga": {
     "loading": "Laden…",
@@ -407,5 +411,11 @@
     "ltr": "LTR",
     "resetZoom": "Zurücksetzen",
     "tapHint": "Blättern · F ausblenden · Esc beenden"
+  },
+  "update": {
+    "title": "Version {{version}} ist da",
+    "desc": "Ein neueres Agamiz Cinema ist verfügbar. Lade es von GitHub herunter.",
+    "download": "Update holen",
+    "later": "Vielleicht später"
   }
 }

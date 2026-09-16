@@ -46,29 +46,38 @@ import {
 } from "@/services/download";
 import { isTauri } from "@/services/tauri";
 import { setDiscordPresence } from "@/services/discord";
+import { watchPageUrl } from "@/services/vidsync";
 
 const PROGRESS_TICK_MS = 15_000;
 const PROGRESS_PER_TICK = 3.5;
 
 /**
- * Best-effort player controller for a cross-origin embed, bridged over
- * postMessage using the same `{ __watch: true, type }` protocol the Watch
- * Together panel speaks. The embed won't reveal its clock, so `getSnapshot`
- * returns neutral values (auto-skip stays idle for embeds).
+ * Best-effort player controller for a cross-origin embed. Commands travel to
+ * the embed via postMessage (`{ __watch: true, type }`); on desktop a bridge
+ * script injected into the frame applies them to the real `<video>` element.
+ * `getSnapshot` reads the playback state the bridge reports back through
+ * `__agamizEvent` messages (0 until the bridge reports, which keeps auto-skip
+ * idle on the web build where injection is impossible).
  */
-function iframeController(iframeRef: RefObject<HTMLIFrameElement | null>): PlayerController {
+function iframeController(
+  iframeRef: RefObject<HTMLIFrameElement | null>,
+  stateRef?: RefObject<{ playing: boolean; currentTime: number; duration: number }>,
+): PlayerController {
   const post = (message: Record<string, unknown>) => {
     try {
       iframeRef.current?.contentWindow?.postMessage({ __watch: true, ...message }, "*");
     } catch {
-      /* cross-origin safety — ignore */
+      /* cross-origin safety - ignore */
     }
   };
   return {
     play: () => post({ type: "PLAY" }),
     pause: () => post({ type: "PAUSE" }),
     seekTo: (seconds) => post({ type: "SEEK", time: seconds }),
-    getSnapshot: () => ({ playing: false, currentTime: 0, duration: 0 }),
+    getSnapshot: () =>
+      stateRef?.current
+        ? { ...stateRef.current }
+        : { playing: false, currentTime: 0, duration: 0 },
   };
 }
 
@@ -96,6 +105,27 @@ export function VideoPlayerModal() {
   const timerRef = useRef<number | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const introStartRef = useRef(0);
+  const embedStateRef = useRef({ playing: false, currentTime: 0, duration: 0 });
+
+  // Bridge events from the embed frame (desktop injects the bridge script;
+  // on the web build nothing sends these, so the state stays neutral).
+  useEffect(() => {
+    const onMessage = (event: MessageEvent) => {
+      const d = event.data as {
+        __agamizEvent?: boolean;
+        type?: string;
+        time?: number;
+        duration?: number;
+        playing?: boolean;
+      };
+      if (!d || d.__agamizEvent !== true) return;
+      if (typeof d.time === "number") embedStateRef.current.currentTime = d.time;
+      if (typeof d.duration === "number") embedStateRef.current.duration = d.duration;
+      if (typeof d.playing === "boolean") embedStateRef.current.playing = d.playing;
+    };
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, []);
 
   const isTV = state?.mediaType === "tv";
 
@@ -273,9 +303,18 @@ export function VideoPlayerModal() {
       isTV ? season : undefined,
       isTV ? episode : undefined,
     );
-    // Web / mobile browser: open the source's player in a new tab.
+    // Web / mobile browser: open the source's watch page (or home) in a new
+    // tab - the raw embed URL renders broken as a top-level document.
     if (!isTauri()) {
-      openInSource(url);
+      openInSource(
+        watchPageUrl(
+          settings.defaultSource,
+          state.mediaType,
+          state.tmdbId,
+          isTV ? season : undefined,
+          isTV ? episode : undefined,
+        ),
+      );
       setDownloadStatus(t("player.openedInSource"));
       return;
     }
@@ -326,7 +365,7 @@ export function VideoPlayerModal() {
   const { activeSegment, skipNow } = useAutoSkip({
     enabled: settings.autoSkip,
     segments: skipSegments,
-    getPlayer: () => iframeController(iframeRef),
+    getPlayer: () => iframeController(iframeRef, embedStateRef),
   });
 
   const skipActionLabel = (seg: SkipSegment): string => {
@@ -341,7 +380,7 @@ export function VideoPlayerModal() {
 
   const handleMarkIntro = (edge: "start" | "end") => {
     if (!state || !watchMediaKey) return;
-    const time = iframeController(iframeRef).getSnapshot().currentTime;
+    const time = iframeController(iframeRef, embedStateRef).getSnapshot().currentTime;
     if (edge === "start") {
       introStartRef.current = time;
       toast({ message: t("skip.markedStart"), tone: "success" });
@@ -420,7 +459,7 @@ export function VideoPlayerModal() {
   };
 
   useGlobalMediaControls({
-    getPlayer: () => iframeController(iframeRef),
+    getPlayer: () => iframeController(iframeRef, embedStateRef),
     onNext: goNext,
     onPrevious: goPrev,
   });
@@ -637,6 +676,15 @@ export function VideoPlayerModal() {
                     }`}
                     allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
                     allowFullScreen
+                    referrerPolicy="no-referrer"
+                    // Browser-only popup blocker: sandboxing without
+                    // `allow-popups` kills the embed's window.open / _blank
+                    // popups (the main ad vector). Desktop has blocker.rs.
+                    sandbox={
+                      !isTauri() && settings.blockPopups
+                        ? "allow-scripts allow-same-origin allow-forms allow-presentation"
+                        : undefined
+                    }
                     onLoad={() => setIframeLoading(false)}
                   />
                   {iframeLoading && (

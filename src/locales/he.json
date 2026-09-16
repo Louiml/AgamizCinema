@@ -19,7 +19,7 @@
     "back": "הקודם",
     "next": "הבא",
     "retry": "נסה שוב",
-    "nothingHere": "אין כאן כלום עדיין — חזור מאוחר יותר.",
+    "nothingHere": "אין כאן כלום עדיין - חזור מאוחר יותר.",
     "viewInfo": "צפה במידע",
     "movie": "סרט",
     "tvSeries": "סדרת טלוויזיה"
@@ -62,11 +62,12 @@
   "search": {
     "loadingTrends": "התחל להקליד כדי לחפש בסרטים ובסדרות.",
     "noResults": "אין תוצאות עבור “{{query}}”.",
-    "apiKeyHint": "{{message}} — בדוק את מפתח ה-API של TMDB בהגדרות.",
+    "apiKeyHint": "{{message}} - בדוק את מפתח ה-API של TMDB בהגדרות.",
     "failed": "החיפוש נכשל",
     "recent": "חיפושים אחרונים",
     "clearRecent": "נקה אחרונים",
-    "trending": "חם עכשיו"
+    "trending": "חם עכשיו",
+    "actors": "שחקנים"
   },
   "details": {
     "couldntLoad": "לא ניתן היה לטעון את הפרטים.",
@@ -94,7 +95,7 @@
     "cleared": "פונה",
     "backupExported": "הגיבוי יוצא",
     "backupImported": "הגיבוי יובא",
-    "backupImportFailed": "הייבוא נכשל — קובץ לא תקין",
+    "backupImportFailed": "הייבוא נכשל - קובץ לא תקין",
     "backupExportFailed": "הייצוא נכשל",
     "joiningRoom": "מצטרף לצפייה משותפת…",
     "roomJoined": "הצטרפת לצפייה המשותפת"
@@ -111,7 +112,7 @@
     "topFilmography": "פילמוגרפיה מובילה"
   },
   "trailer": {
-    "watch": "צפה בטריילר — {{title}}",
+    "watch": "צפה בטריילר - {{title}}",
     "official": "טריילר רשמי של TMDB",
     "loading": "טוען טריילר…",
     "none": "אין טריילר זמין עבור כותרת זו עדיין.",
@@ -259,12 +260,14 @@
     "cleanViewSettingDesc": "הסתר רכיבים מיותרים סביב הנגן בעת פתיחתו.",
     "backupExported": "הגיבוי יוצא",
     "backupImported": "הגיבוי יובא",
-    "backupImportFailed": "הייבוא נכשל — קובץ לא תקין",
+    "backupImportFailed": "הייבוא נכשל - קובץ לא תקין",
     "backupExportFailed": "הייצוא נכשל",
     "mangaReaderMode": "מצב קריאת מאנגה",
     "mangaReaderModeDesc": "גלילה מצמיד את כל העמודים; עמודים מציג אחד בכל פעם.",
     "mangaReadingDirection": "כיוון קריאת מאנגה",
-    "mangaReadingDirectionDesc": "מימין לשמאל למאנגה, משמאל לימין לוובטון."
+    "mangaReadingDirectionDesc": "מימין לשמאל למאנגה, משמאל לימין לוובטון.",
+    "blockPopups": "חסום חלונות קופצים",
+    "blockPopupsDesc": "מונע ממקורות הנגן לפתוח פרסומות קופצות בדפדפן."
   },
   "player": {
     "movie": "סרט",
@@ -305,12 +308,12 @@
     "playTitle": "הפעל: {{title}}",
     "couldntLoadEpisodeData": "לא ניתן היה לטעון את נתוני הפרק.",
     "couldntLoadEpisodes": "לא ניתן היה לטעון את הפרקים.",
-    "downloadFinished": "ההורדה הסתיימה — {{path}}",
+    "downloadFinished": "ההורדה הסתיימה - {{path}}",
     "downloadsFolder": "נשמר בתיקיית ההורדות",
     "downloadFailed": "ההורדה נכשלה.",
-    "downloadError": "שגיאת הורדה — {{error}}",
+    "downloadError": "שגיאת הורדה - {{error}}",
     "openingDownload": "פותח חלון הורדה…",
-    "downloadWindowOpened": "חלון ההורדה נפתח — הקבצים נשמרים בתיקיית ההורדות.",
+    "downloadWindowOpened": "חלון ההורדה נפתח - הקבצים נשמרים בתיקיית ההורדות.",
     "couldntOpenDownload": "לא ניתן היה לפתוח את חלון ההורדה.",
     "openInSource": "פתח במקור",
     "openedInSource": "נגן המקור נפתח בלשונית חדשה."
@@ -336,7 +339,8 @@
     "pauseAll": "השהה",
     "invalidRoom": "מזהה חדר או קישור לא תקין.",
     "roomNotFound": "החדר לא נמצא.",
-    "browserUnsupported": "הדפדפן הזה לא תומך ב-WebRTC."
+    "browserUnsupported": "הדפדפן הזה לא תומך ב-WebRTC.",
+    "hostControls": "המארח שולט בנגינה - היא מסתנכרנת לכולם."
   },
   "install": {
     "title": "התקן את Agamiz Cinema",
@@ -353,7 +357,7 @@
     "markEnd": "סמן סיום פתיח",
     "markedStart": "תחילת הפתיח סומנה במיקום הנוכחי.",
     "markStartFirst": "סמן תחילה את תחילת הפתיח.",
-    "saved": "הפתיח נשמר — יידלג אוטומטית בפעם הבאה."
+    "saved": "הפתיח נשמר - יידלג אוטומטית בפעם הבאה."
   },
   "manga": {
     "loading": "טוען…",
@@ -408,5 +412,11 @@
     "ltr": "LTR",
     "resetZoom": "אפס",
     "tapHint": "דפדוף · F הסתר · Esc יציאה"
+  },
+  "update": {
+    "title": "יצאה גרסה {{version}}",
+    "desc": "קיימת גרסה חדשה של Agamiz Cinema. הורד אותה מ-GitHub.",
+    "download": "הורד עדכון",
+    "later": "אולי אחר כך"
   }
 }

@@ -3,7 +3,7 @@
  *
  * Transport: WebRTC DataChannels established with `peerjs` and its *free*
  * public Cloudflare-hosted signaling server (`0.peerjs.com`). Signaling is only
- * used for the WebRTC handshake (SDP + ICE) — after that all playback state
+ * used for the WebRTC handshake (SDP + ICE) - after that all playback state
  * travels over an end-to-end encrypted, low-latency DataChannel. No custom
  * backend is ever deployed.
  *

@@ -236,7 +236,7 @@ export function DiscoverPage() {
         </button>
       </div>
 
-      {/* Filter bar — mobile: single full-width button */}
+      {/* Filter bar - mobile: single full-width button */}
       <div className="sticky top-14 z-30 animate-fade-in-up md:hidden">
         <button
           onClick={() => setSheetOpen(true)}

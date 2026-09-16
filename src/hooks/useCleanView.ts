@@ -15,7 +15,7 @@ export function useCleanView(
       try {
         target.contentWindow?.postMessage({ __agamizCleanView: value }, "*");
       } catch {
-        /* cross-origin safety — ignore */
+        /* cross-origin safety - ignore */
       }
     };
 

@@ -20,7 +20,7 @@
     "next": "التالي",
     "retry": "إعادة المحاولة",
     "select": "اختر…",
-    "nothingHere": "لا شيء هنا بعد — تحقق قريبًا.",
+    "nothingHere": "لا شيء هنا بعد - تحقق قريبًا.",
     "viewInfo": "عرض المعلومات",
     "movie": "فيلم",
     "tvSeries": "مسلسل"
@@ -63,11 +63,12 @@
   "search": {
     "loadingTrends": "ابدأ الكتابة للبحث في الأفلام والمسلسلات.",
     "noResults": "لا نتائج لـ“{{query}}”.",
-    "apiKeyHint": "{{message}} — تحقق من مفتاح TMDB API في الإعدادات.",
+    "apiKeyHint": "{{message}} - تحقق من مفتاح TMDB API في الإعدادات.",
     "failed": "فشل البحث",
     "recent": "عمليات البحث الأخيرة",
     "clearRecent": "مسح الأخيرة",
-    "trending": "الرائج"
+    "trending": "الرائج",
+    "actors": "ممثلون"
   },
   "details": {
     "couldntLoad": "تعذّر تحميل التفاصيل.",
@@ -93,7 +94,7 @@
     "cleared": "تم المسح",
     "backupExported": "تم تصدير النسخة الاحتياطية",
     "backupImported": "تم استيراد النسخة الاحتياطية",
-    "backupImportFailed": "فشل الاستيراد — ملف غير صالح",
+    "backupImportFailed": "فشل الاستيراد - ملف غير صالح",
     "backupExportFailed": "فشل التصدير",
     "joiningRoom": "الانضمام إلى حفلة المشاهدة…",
     "roomJoined": "انضممت إلى حفلة المشاهدة"
@@ -110,7 +111,7 @@
     "topFilmography": "أبرز الأعمال"
   },
   "trailer": {
-    "watch": "شاهد المقطع — {{title}}",
+    "watch": "شاهد المقطع - {{title}}",
     "official": "مقطع TMDB الرسمي",
     "loading": "تحميل المقطع…",
     "none": "لا يتوفر مقطع لهذا العنوان بعد.",
@@ -256,12 +257,14 @@
     "cleanViewSettingDesc": "إخفاء الفوضى حول مشغّل الفيديو عند فتحه.",
     "backupExported": "تم تصدير النسخة الاحتياطية",
     "backupImported": "تم استيراد النسخة الاحتياطية",
-    "backupImportFailed": "فشل الاستيراد — ملف غير صالح",
+    "backupImportFailed": "فشل الاستيراد - ملف غير صالح",
     "backupExportFailed": "فشل التصدير",
     "mangaReaderMode": "وضع قراءة المانغا",
     "mangaReaderModeDesc": "التمرير يكدّس كل الصفحات؛ الصفحات يعرض واحدة كل مرة.",
     "mangaReadingDirection": "اتجاه قراءة المانغا",
-    "mangaReadingDirectionDesc": "من اليمين إلى اليسار للمانغا، من اليسار إلى اليمين للويبتون."
+    "mangaReadingDirectionDesc": "من اليمين إلى اليسار للمانغا، من اليسار إلى اليمين للويبتون.",
+    "blockPopups": "حظر النوافذ المنبثقة",
+    "blockPopupsDesc": "يمنع مصادر المشغل من فتح إعلانات منبثقة في المتصفح."
   },
   "player": {
     "movie": "فيلم",
@@ -304,12 +307,12 @@
     "playTitle": "تشغيل {{title}}",
     "couldntLoadEpisodeData": "تعذّر تحميل بيانات الحلقة.",
     "couldntLoadEpisodes": "تعذّر تحميل الحلقات.",
-    "downloadFinished": "اكتمل التنزيل — {{path}}",
+    "downloadFinished": "اكتمل التنزيل - {{path}}",
     "downloadsFolder": "حُفظ في مجلد التنزيلات",
     "downloadFailed": "فشل التنزيل.",
-    "downloadError": "خطأ في التنزيل — {{error}}",
+    "downloadError": "خطأ في التنزيل - {{error}}",
     "openingDownload": "فتح نافذة التنزيل…",
-    "downloadWindowOpened": "تم فتح نافذة التنزيل — تُحفظ الملفات في مجلد التنزيلات.",
+    "downloadWindowOpened": "تم فتح نافذة التنزيل - تُحفظ الملفات في مجلد التنزيلات.",
     "couldntOpenDownload": "تعذّر فتح نافذة التنزيل.",
     "openInSource": "افتح في المصدر",
     "openedInSource": "تم فتح مشغّل المصدر في تبويب جديد."
@@ -335,7 +338,8 @@
     "pauseAll": "إيقاف مؤقت",
     "invalidRoom": "رابط أو معرّف غرفة غير صالح.",
     "roomNotFound": "الغرفة غير موجودة.",
-    "browserUnsupported": "هذا المتصفح لا يدعم WebRTC."
+    "browserUnsupported": "هذا المتصفح لا يدعم WebRTC.",
+    "hostControls": "المضيف يتحكم في التشغيل - يتزامن مع الجميع."
   },
   "install": {
     "title": "تثبيت Agamiz Cinema",
@@ -352,7 +356,7 @@
     "markEnd": "تحديد نهاية المقدمة",
     "markedStart": "تم تحديد بداية المقدمة عند الموضع الحالي.",
     "markStartFirst": "حدّد بداية المقدمة أولاً.",
-    "saved": "تم حفظ المقدمة — سيتم تخطيها تلقائيًا في المرة القادمة."
+    "saved": "تم حفظ المقدمة - سيتم تخطيها تلقائيًا في المرة القادمة."
   },
   "manga": {
     "loading": "تحميل…",
@@ -407,5 +411,11 @@
     "ltr": "LTR",
     "resetZoom": "إعادة",
     "tapHint": "تصفح · F إخفاء · Esc خروج"
+  },
+  "update": {
+    "title": "صدر الإصدار {{version}}",
+    "desc": "يتوفر إصدار أحدث من Agamiz Cinema. نزّله من GitHub.",
+    "download": "احصل على التحديث",
+    "later": "ربما لاحقًا"
   }
 }

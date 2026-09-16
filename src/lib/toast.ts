@@ -1,6 +1,6 @@
 /**
  * Tiny global toast bus. Decouples emit sites (watchlist toggle, copy, errors)
- * from the viewport that renders them — any module can call `toast()` without
+ * from the viewport that renders them - any module can call `toast()` without
  * a React context or prop drilling. The {@link ToastViewport} subscribes and
  * renders the stack; auto-dismiss is handled here so callers stay one-liners.
  */

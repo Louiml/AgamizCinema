@@ -8,6 +8,7 @@ import type {
   PersonDetails,
   TMDBDetails,
   TMDBMovie,
+  TMDBPerson,
   Video,
 } from "@/types/tmdb";
 import { getApiKey } from "@/config/tmdb";
@@ -109,13 +110,17 @@ export function backdropUrl(path: string | null, size: "w300" | "w780" | "w1280"
   return path ? `${TMDB_IMAGE_BASE}/${size}${path}` : null;
 }
 
+export function profileUrl(path: string | null, size: "w92" | "w154" | "w185" | "h632" | "original" = "w185"): string | null {
+  return path ? `${TMDB_IMAGE_BASE}/${size}${path}` : null;
+}
+
 export function titleOf(item: Pick<TMDBMovie, "title" | "name">): string {
   return item.title ?? item.name ?? "Untitled";
 }
 
 export function yearOf(item: { release_date?: string; first_air_date?: string }): string {
   const date = item.release_date ?? item.first_air_date;
-  return date ? date.slice(0, 4) : "—";
+  return date ? date.slice(0, 4) : "-";
 }
 
 export interface NormalizedMedia {
@@ -150,13 +155,83 @@ export function normalizeMedia(
   };
 }
 
+/** A person (actor / director) normalized for search results. */
+export interface NormalizedPerson {
+  id: number;
+  name: string;
+  profilePath: string | null;
+  department: string;
+  knownFor: string[];
+}
+
+function normalizePerson(p: TMDBPerson): NormalizedPerson {
+  return {
+    id: p.id,
+    name: p.name,
+    profilePath: p.profile_path,
+    department: p.known_for_department ?? "",
+    knownFor: (p.known_for ?? [])
+      .map((k) => titleOf(k))
+      .filter(Boolean)
+      .slice(0, 3),
+  };
+}
+
 export const tmdb = {
-  async search(query: string): Promise<NormalizedMedia[]> {
-    if (!query.trim()) return [];
-    const res = await tmdbFetch<PaginatedResponse<TMDBMovie>>("/search/multi", {
+  /**
+   * Multi search (movies + TV + people). Person results are split out so the
+   * caller can render them as actor rows instead of broken movie rows.
+   */
+  async search(query: string): Promise<{ media: NormalizedMedia[]; people: NormalizedPerson[] }> {
+    if (!query.trim()) return { media: [], people: [] };
+    const res = await tmdbFetch<PaginatedResponse<TMDBMovie & Partial<TMDBPerson>>>("/search/multi", {
       params: { query, include_adult: "false", language: currentTmdbLanguage() },
     });
-    return res.results.map((r) => normalizeMedia(r)).slice(0, 12);
+    const media: NormalizedMedia[] = [];
+    const people: NormalizedPerson[] = [];
+    for (const r of res.results) {
+      if (r.media_type === "person") {
+        people.push(
+          normalizePerson({
+            id: r.id,
+            name: r.name ?? "",
+            profile_path: r.profile_path ?? null,
+            known_for_department: r.known_for_department,
+            known_for: r.known_for ?? [],
+          }),
+        );
+      } else {
+        media.push(normalizeMedia(r));
+      }
+    }
+    return { media: media.slice(0, 12), people: people.slice(0, 6) };
+  },
+
+  /** Search movies only. */
+  async searchMovies(query: string): Promise<NormalizedMedia[]> {
+    if (!query.trim()) return [];
+    const res = await tmdbFetch<PaginatedResponse<TMDBMovie>>("/search/movie", {
+      params: { query, include_adult: "false", language: currentTmdbLanguage() },
+    });
+    return res.results.map((r) => normalizeMedia(r, "movie")).slice(0, 12);
+  },
+
+  /** Search TV series only. */
+  async searchTv(query: string): Promise<NormalizedMedia[]> {
+    if (!query.trim()) return [];
+    const res = await tmdbFetch<PaginatedResponse<TMDBMovie>>("/search/tv", {
+      params: { query, include_adult: "false", language: currentTmdbLanguage() },
+    });
+    return res.results.map((r) => normalizeMedia(r, "tv")).slice(0, 12);
+  },
+
+  /** Search people (actors, directors) only. */
+  async searchPeople(query: string): Promise<NormalizedPerson[]> {
+    if (!query.trim()) return [];
+    const res = await tmdbFetch<PaginatedResponse<TMDBPerson>>("/search/person", {
+      params: { query, include_adult: "false", language: currentTmdbLanguage() },
+    });
+    return res.results.map(normalizePerson).slice(0, 12);
   },
 
   async trending(): Promise<NormalizedMedia[]> {

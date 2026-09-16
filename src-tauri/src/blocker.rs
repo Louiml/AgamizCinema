@@ -18,6 +18,10 @@ const EMBED_ALLOWED_HOSTS: &[&str] = &[
     "cinesrc.st",
     "vidrocks.cc",
     "vidrock.net",
+    "vidcore.net",
+    "stellar.rip",
+    "zxcstream.xyz",
+    "peachify.top",
 ];
 
 fn host_or_subdomain(host: &str, allowed: &str) -> bool {
@@ -57,6 +61,7 @@ pub fn harden<M: tauri::Manager<tauri::Wry>>(
     builder
         .initialization_script_for_all_frames(POPUP_GUARD_SCRIPT)
         .initialization_script_for_all_frames(DOM_CLEAN_SCRIPT)
+        .initialization_script_for_all_frames(SYNC_BRIDGE_SCRIPT)
         .on_navigation(move |url| allow_navigation(url, mode))
         .on_new_window(move |_url, _features| NewWindowResponse::Deny)
 }
@@ -171,6 +176,95 @@ pub const DOM_CLEAN_SCRIPT: &str = r#"(function () {
   }, false);
 
   teardown();
+})();
+"#;
+
+/// Injected into every frame. Inside the cross-origin embed it finds the
+/// `<video>` element and bridges Watch Together commands in (PLAY / PAUSE /
+/// SEEK) and playback events out (`__agamizEvent`) to the parent window, which
+/// the frontend uses to drive the host-authoritative sync. Inert in the main
+/// app frame (no videos there, and it never posts when it is the top frame).
+pub const SYNC_BRIDGE_SCRIPT: &str = r#"(function () {
+  'use strict';
+  if (window.__AGAMIZ_SYNC__) return;
+  window.__AGAMIZ_SYNC__ = true;
+
+  var IN_FRAME = false;
+  try { IN_FRAME = window.parent !== window; } catch (e) { IN_FRAME = false; }
+  var TOLERANCE = 1.5;
+  var lastReport = 0;
+  var observed = new WeakSet();
+
+  function post(type, v) {
+    if (!IN_FRAME) return;
+    try {
+      window.parent.postMessage({
+        __agamizEvent: true,
+        type: type,
+        time: v.currentTime || 0,
+        duration: isFinite(v.duration) ? v.duration : 0,
+        playing: !v.paused && !v.ended
+      }, '*');
+    } catch (e) {}
+  }
+
+  function videos() {
+    try {
+      return Array.prototype.slice.call(document.querySelectorAll('video'));
+    } catch (e) { return []; }
+  }
+
+  function apply(type, time) {
+    videos().forEach(function (v) {
+      try {
+        if (type === 'PLAY') {
+          if (time !== null && Math.abs((v.currentTime || 0) - time) > TOLERANCE) {
+            v.currentTime = Math.max(0, Math.min(time, isFinite(v.duration) ? v.duration : time));
+          }
+          var p = v.play();
+          if (p && p.catch) p.catch(function () {});
+        } else if (type === 'PAUSE') {
+          if (time !== null && Math.abs((v.currentTime || 0) - time) > TOLERANCE) {
+            v.currentTime = Math.max(0, time);
+          }
+          v.pause();
+        } else if (type === 'SEEK' && time !== null) {
+          v.currentTime = Math.max(0, time);
+        }
+      } catch (e) {}
+    });
+  }
+
+  window.addEventListener('message', function (e) {
+    var d = e.data;
+    if (!d || typeof d !== 'object' || d.__watch !== true) return;
+    var t = d.type;
+    if (t !== 'PLAY' && t !== 'PAUSE' && t !== 'SEEK') return;
+    var time = typeof d.time === 'number' ? d.time : null;
+    apply(t, time);
+  });
+
+  function attach() {
+    videos().forEach(function (v) {
+      if (observed.has(v)) return;
+      observed.add(v);
+      v.addEventListener('play', function () { post('PLAY', v); });
+      v.addEventListener('pause', function () { post('PAUSE', v); });
+      v.addEventListener('seeked', function () { post('SEEK', v); });
+      v.addEventListener('timeupdate', function () {
+        var now = Date.now();
+        if (now - lastReport < 500) return;
+        lastReport = now;
+        post('TIME', v);
+      });
+    });
+  }
+
+  attach();
+  try {
+    var mo = new MutationObserver(function () { attach(); });
+    mo.observe(document.documentElement, { childList: true, subtree: true });
+  } catch (e) {}
 })();
 "#;
 

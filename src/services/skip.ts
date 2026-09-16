@@ -43,7 +43,7 @@ function writeCache(cache: SkipCache): void {
   try {
     localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
   } catch {
-    /* storage full / unavailable — skip silently */
+    /* storage full / unavailable - skip silently */
   }
 }
 
@@ -120,7 +120,7 @@ export async function fetchAniSkipSegments(
 }
 
 /**
- * SponsorBlock — https://sponsor.ajay.app/api/skipSegments?videoID=…
+ * SponsorBlock - https://sponsor.ajay.app/api/skipSegments?videoID=…
  * Only intro/outro categories map to skip kinds; everything else is ignored.
  */
 export async function fetchSponsorBlockSegments(
@@ -154,9 +154,9 @@ export interface SkipResolveInput {
   /** Stable media key, e.g. `movie:123` or `tv:123:1:2`. */
   mediaKey: string;
   episode?: number;
-  /** MyAnimeList id — enables AniSkip lookups (anime). */
+  /** MyAnimeList id - enables AniSkip lookups (anime). */
   malId?: number;
-  /** YouTube-style video id — enables SponsorBlock lookups. */
+  /** YouTube-style video id - enables SponsorBlock lookups. */
   videoId?: string;
   /** Bypass the cache and hit the network again. */
   refresh?: boolean;

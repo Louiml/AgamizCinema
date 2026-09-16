@@ -11,7 +11,7 @@ interface TopTenRowProps {
 }
 
 /**
- * Horizontal "Top 10" row — each title sits beside a large gradient rank
+ * Horizontal "Top 10" row - each title sits beside a large gradient rank
  * numeral (Netflix-style). Auto-derives the rank from list order. RTL-safe:
  * the numeral anchors to the inline-start edge in every direction.
  */
@@ -42,7 +42,7 @@ export function TopTenRow({ title, subtitle, media }: TopTenRowProps) {
   // Hijack vertical wheel over the row → horizontal scroll. Always
   // preventDefault so the page never scrolls top-to-bottom over the row (no
   // end-of-row "space" jump). Direct 1:1 scrollLeft tracking is the smoothest
-  // for wheel input — no queued smooth-animation lag, matches the wheel exactly.
+  // for wheel input - no queued smooth-animation lag, matches the wheel exactly.
   useEffect(() => {
     const el = scrollerRef.current;
     if (!el) return;

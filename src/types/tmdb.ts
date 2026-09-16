@@ -131,6 +131,15 @@ export interface TMDBDetails {
   credits?: Credits;
 }
 
+export interface TMDBPerson {
+  id: number;
+  name: string;
+  profile_path: string | null;
+  known_for_department?: string;
+  media_type?: string;
+  known_for?: TMDBMovie[];
+}
+
 export interface PaginatedResponse<T> {
   page: number;
   results: T[];

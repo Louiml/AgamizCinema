@@ -1,16 +1,20 @@
 import { isTauri, runInTauri } from "@/services/tauri";
 
 /**
- * MangaDex client. MangaDex sends no CORS headers and blocks hotlinked images
- * from its own domains, so on desktop everything goes through the Rust proxy:
- *  - API JSON via the `manga_proxy` invoke command.
- *  - Cover and chapter-page images via the `mdximg://` URI scheme.
- *
- * The web build has no backend, so the service throws `desktopOnly` outside
- * Tauri; callers gate the UI on `mangaSupported()`.
+ * MangaDex client. MangaDex sends no CORS headers, so the JSON API needs a
+ * relay: on desktop everything goes through the Rust `manga_proxy` command;
+ * on the web build it falls back to public CORS proxies (allorigins, then
+ * corsproxy.io). Cover and chapter-page images load fine everywhere through
+ * plain `<img referrerpolicy="no-referrer">` tags, so only the API needs this.
  */
 
 const API = "https://api.mangadex.org";
+
+/** Public CORS relays for the web build, tried in order. */
+const CORS_PROXIES: Array<(u: string) => string> = [
+  (u) => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+  (u) => `https://corsproxy.io/?url=${encodeURIComponent(u)}`,
+];
 
 /** Content ratings we serve. MangaDex policy: we keep it family-friendly. */
 const CONTENT_RATINGS = ["safe", "suggestive"] as const;
@@ -102,11 +106,27 @@ function coverFileName(entity: MdEntity): string | null {
 }
 
 export function mangaSupported(): boolean {
-  return isTauri();
+  return true;
+}
+
+/** Web build: relay the JSON through public CORS proxies, first one that works wins. */
+async function mangaFetchBrowser<T>(url: string): Promise<T> {
+  let lastError: unknown = null;
+  for (const wrap of CORS_PROXIES) {
+    try {
+      const res = await fetch(wrap(url), { headers: { accept: "application/json" } });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return (await res.json()) as T;
+    } catch (e) {
+      lastError = e;
+    }
+  }
+  throw new MangaError(
+    lastError instanceof Error ? lastError.message : "CORS proxy failed",
+  );
 }
 
 async function mangaFetch<T>(path: string, params: Record<string, string | number | string[] | undefined>): Promise<T> {
-  if (!isTauri()) throw new MangaError("desktopOnly");
   const url = new URL(`${API}${path}`);
   for (const [key, value] of Object.entries(params)) {
     if (value === undefined || value === "") continue;
@@ -116,13 +136,16 @@ async function mangaFetch<T>(path: string, params: Record<string, string | numbe
       url.searchParams.set(key, String(value));
     }
   }
-  const res = await runInTauri<{ ok: boolean; status?: number; data?: T }>("manga_proxy", {
-    url: url.toString(),
-  });
-  if (!res.ok || res.data === undefined) {
-    throw new MangaError("MangaDex request failed", res.status);
+  if (isTauri()) {
+    const res = await runInTauri<{ ok: boolean; status?: number; data?: T }>("manga_proxy", {
+      url: url.toString(),
+    });
+    if (!res.ok || res.data === undefined) {
+      throw new MangaError("MangaDex request failed", res.status);
+    }
+    return res.data;
   }
-  return res.data;
+  return mangaFetchBrowser<T>(url.toString());
 }
 
 export function coverUrl(mangaId: string, fileName: string): string {

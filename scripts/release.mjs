@@ -99,13 +99,13 @@ if (positionals.length === 0) {
 }
 
 if (!/^\d+\.\d+\.\d+$/.test(version)) {
-  fail(`invalid version "${version}" — expected x.y.z or patch|minor|major`);
+  fail(`invalid version "${version}" - expected x.y.z or patch|minor|major`);
 }
 
 console.log(`[release] ${raw} -> ${version}`);
 
 if (dryRun) {
-  console.log(`[release] dry run — files would be updated, no build/commit/tag performed`);
+  console.log(`[release] dry run - files would be updated, no build/commit/tag performed`);
   process.exit(0);
 }
 
@@ -120,7 +120,7 @@ if (doBuild) {
 }
 
 if (!doCommit) {
-  console.log(`[release] done — no commit/tag created (--no-commit)`);
+  console.log(`[release] done - no commit/tag created (--no-commit)`);
   process.exit(0);
 }
 

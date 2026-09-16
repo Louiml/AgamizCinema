@@ -20,7 +20,7 @@
     "next": "Next",
     "retry": "Retry",
     "select": "Select…",
-    "nothingHere": "Nothing here yet — check back soon.",
+    "nothingHere": "Nothing here yet - check back soon.",
     "viewInfo": "View Info",
     "movie": "Movie",
     "tvSeries": "TV Series"
@@ -63,11 +63,12 @@
   "search": {
     "loadingTrends": "Start typing to search across movies &amp; TV series.",
     "noResults": "No results for “{{query}}”.",
-    "apiKeyHint": "{{message}} — check your TMDB API key in Settings.",
+    "apiKeyHint": "{{message}} - check your TMDB API key in Settings.",
     "failed": "Search failed",
     "recent": "Recent searches",
     "clearRecent": "Clear recent",
-    "trending": "Trending now"
+    "trending": "Trending now",
+    "actors": "Actors"
   },
   "details": {
     "couldntLoad": "Could not load details.",
@@ -93,7 +94,7 @@
     "cleared": "Cleared",
     "backupExported": "Backup exported",
     "backupImported": "Backup imported",
-    "backupImportFailed": "Import failed — invalid file",
+    "backupImportFailed": "Import failed - invalid file",
     "backupExportFailed": "Export failed",
     "joiningRoom": "Joining watch party…",
     "roomJoined": "Joined the watch party"
@@ -110,7 +111,7 @@
     "topFilmography": "Top Filmography"
   },
   "trailer": {
-    "watch": "Watch Trailer — {{title}}",
+    "watch": "Watch Trailer - {{title}}",
     "official": "TMDB official trailer",
     "loading": "Loading trailer…",
     "none": "No trailer is available for this title yet.",
@@ -256,12 +257,14 @@
     "cleanViewSettingDesc": "Hide clutter around the video player when it opens.",
     "backupExported": "Backup exported",
     "backupImported": "Backup imported",
-    "backupImportFailed": "Import failed — invalid file",
+    "backupImportFailed": "Import failed - invalid file",
     "backupExportFailed": "Export failed",
     "mangaReaderMode": "Manga Reader Mode",
     "mangaReaderModeDesc": "Scroll stacks every page; Paged shows one at a time.",
     "mangaReadingDirection": "Manga Reading Direction",
-    "mangaReadingDirectionDesc": "Right-to-left for manga, left-to-right for webtoons."
+    "mangaReadingDirectionDesc": "Right-to-left for manga, left-to-right for webtoons.",
+    "blockPopups": "Block Popups",
+    "blockPopupsDesc": "Stops the player sources from opening popup ads in the browser."
   },
   "player": {
     "movie": "Movie",
@@ -306,12 +309,12 @@
     "playTitle": "Play {{title}}",
     "couldntLoadEpisodeData": "Could not load episode data.",
     "couldntLoadEpisodes": "Could not load episodes.",
-    "downloadFinished": "Download finished — {{path}}",
+    "downloadFinished": "Download finished - {{path}}",
     "downloadsFolder": "saved to your downloads folder",
     "downloadFailed": "Download failed.",
-    "downloadError": "Download error — {{error}}",
+    "downloadError": "Download error - {{error}}",
     "openingDownload": "Opening download window…",
-    "downloadWindowOpened": "Download window opened — files save to your downloads folder.",
+    "downloadWindowOpened": "Download window opened - files save to your downloads folder.",
     "couldntOpenDownload": "Could not open the download window."
   },
   "watchTogether": {
@@ -335,7 +338,8 @@
     "pauseAll": "Pause",
     "invalidRoom": "Invalid room link or id.",
     "roomNotFound": "Room not found.",
-    "browserUnsupported": "This browser does not support WebRTC."
+    "browserUnsupported": "This browser does not support WebRTC.",
+    "hostControls": "The host controls playback - it syncs to everyone."
   },
   "install": {
     "title": "Install Agamiz Cinema",
@@ -352,7 +356,7 @@
     "markEnd": "Mark Intro End",
     "markedStart": "Intro start marked at current position.",
     "markStartFirst": "Set Intro Start first.",
-    "saved": "Intro saved — it will be skipped automatically next time."
+    "saved": "Intro saved - it will be skipped automatically next time."
   },
   "manga": {
     "loading": "Loading…",
@@ -407,5 +411,11 @@
     "ltr": "LTR",
     "resetZoom": "Reset",
     "tapHint": "flip · F hide · Esc exit"
+  },
+  "update": {
+    "title": "Version {{version}} is out",
+    "desc": "A newer Agamiz Cinema is available. Download it from GitHub.",
+    "download": "Get the Update",
+    "later": "Maybe later"
   }
 }

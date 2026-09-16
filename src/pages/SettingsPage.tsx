@@ -15,6 +15,7 @@ import {
   FileDown,
   FileUp,
   Mic2,
+  ShieldOff,
   Languages,
   FastForward,
   Wand2,
@@ -277,6 +278,10 @@ export function SettingsPage() {
               { value: "videasy", label: "videasy.net" },
               { value: "cinesrc", label: "cinesrc.st" },
               { value: "vidrock", label: "vidrock.net" },
+              { value: "vidcore", label: "vidcore.net" },
+              { value: "stellar", label: "stellar.rip" },
+              { value: "zxcstream", label: "zxcstream.xyz" },
+              { value: "peachify", label: "peachify.top" },
             ]}
             ariaLabel={t("settings.defaultSource")} />
         </SettingRow>
@@ -287,6 +292,10 @@ export function SettingsPage() {
 
         <SettingRow icon={Wand2} title={t("settings.cleanViewSetting")} desc={t("settings.cleanViewSettingDesc")}>
           <Toggle checked={settings.cleanView} onChange={(v) => update({ cleanView: v })} label={t("settings.cleanViewSetting")} />
+        </SettingRow>
+
+        <SettingRow icon={ShieldOff} title={t("settings.blockPopups")} desc={t("settings.blockPopupsDesc")}>
+          <Toggle checked={settings.blockPopups} onChange={(v) => update({ blockPopups: v })} label={t("settings.blockPopups")} />
         </SettingRow>
 
         {isTauri() && (

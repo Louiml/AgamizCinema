@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { X, Loader2, User, Calendar, MapPin, Briefcase, Play } from "lucide-react";
 import { tmdb, normalizePersonCredit, posterUrl } from "@/services/tmdb";
@@ -93,7 +94,7 @@ export function ActorProfileModal({ person, onClose }: ActorProfileModalProps) {
     );
   };
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-[65] flex items-center justify-center bg-black/85 px-4 py-6 animate-fade-in"
       onClick={onClose}
@@ -238,6 +239,7 @@ export function ActorProfileModal({ person, onClose }: ActorProfileModalProps) {
           </>
         ) : null}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

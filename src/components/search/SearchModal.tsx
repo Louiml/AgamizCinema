@@ -1,19 +1,32 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Search, X, TrendingUp, Film, Tv, BookOpen, SearchX, Loader2, Clock, Trash2 } from "lucide-react";
-import { tmdb, type NormalizedMedia } from "@/services/tmdb";
+import {
+  Search,
+  X,
+  TrendingUp,
+  Film,
+  Tv,
+  User,
+  BookOpen,
+  SearchX,
+  Loader2,
+  Clock,
+  Trash2,
+} from "lucide-react";
+import { tmdb, profileUrl, type NormalizedMedia, type NormalizedPerson } from "@/services/tmdb";
 import { searchManga, mangaLangFor, type MangaSummary, type MangaChapter } from "@/services/manga";
 import { useDebounce } from "@/hooks/useDebounce";
 import { usePlayer } from "@/providers/TMDBProvider";
 import { RatingBadge } from "@/components/ui/RatingBadge";
 import { MangaDetailsModal } from "@/components/manga/MangaDetailsModal";
 import { MangaReader } from "@/components/manga/MangaReader";
-import { isTauri } from "@/services/tauri";
+import { ActorProfileModal } from "@/components/actor/ActorProfileModal";
+import type { Cast } from "@/types/tmdb";
 
 const RECENT_KEY = "agamiz:recentSearches";
 const RECENT_MAX = 6;
 
-type SearchType = "all" | "manga";
+type SearchType = "all" | "movie" | "tv" | "person" | "manga";
 
 function loadRecent(): string[] {
   try {
@@ -50,6 +63,7 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
   const { t, i18n } = useTranslation();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<NormalizedMedia[]>([]);
+  const [people, setPeople] = useState<NormalizedPerson[]>([]);
   const [mangaResults, setMangaResults] = useState<MangaSummary[]>([]);
   const [loading, setLoading] = useState(false);
   const [mangaLoading, setMangaLoading] = useState(false);
@@ -58,21 +72,23 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
   const [recent, setRecent] = useState<string[]>([]);
   const [searchType, setSearchType] = useState<SearchType>("all");
   const [openManga, setOpenManga] = useState<{ id: string; manga: MangaSummary | null } | null>(null);
+  const [openPerson, setOpenPerson] = useState<Cast | null>(null);
   const [readerState, setReaderState] = useState<{ manga: MangaSummary; chapter: MangaChapter; chapters: MangaChapter[] } | null>(null);
   const debounced = useDebounce(query, 350);
   const inputRef = useRef<HTMLInputElement>(null);
   const { open: openPlayer } = usePlayer();
-  const desktop = isTauri();
   const mangaLangs = [mangaLangFor(i18n.language)];
 
   useEffect(() => {
     if (open) {
       setQuery("");
       setResults([]);
+      setPeople([]);
       setMangaResults([]);
       setError(null);
       setRecent(loadRecent());
       setOpenManga(null);
+      setOpenPerson(null);
       setReaderState(null);
       window.setTimeout(() => inputRef.current?.focus(), 60);
       if (trending.length === 0) {
@@ -81,34 +97,46 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
     }
   }, [open]);
 
-  // TMDB search
+  // TMDB search - branch by the active type filter
   useEffect(() => {
     if (!open || !debounced.trim() || searchType === "manga") {
       setResults([]);
+      setPeople([]);
       return;
     }
     let cancelled = false;
     setLoading(true);
     setError(null);
-    tmdb
-      .search(debounced)
-      .then((res) => {
-        if (!cancelled) setResults(res);
-      })
-      .catch((err: unknown) => {
+    const run = async () => {
+      try {
+        if (searchType === "movie") {
+          const media = await tmdb.searchMovies(debounced);
+          if (!cancelled) { setResults(media); setPeople([]); }
+        } else if (searchType === "tv") {
+          const media = await tmdb.searchTv(debounced);
+          if (!cancelled) { setResults(media); setPeople([]); }
+        } else if (searchType === "person") {
+          const found = await tmdb.searchPeople(debounced);
+          if (!cancelled) { setResults([]); setPeople(found); }
+        } else {
+          const res = await tmdb.search(debounced);
+          if (!cancelled) { setResults(res.media); setPeople(res.people); }
+        }
+      } catch (err) {
         if (!cancelled) setError(err instanceof Error ? err.message : t("search.failed"));
-      })
-      .finally(() => {
+      } finally {
         if (!cancelled) setLoading(false);
-      });
+      }
+    };
+    void run();
     return () => {
       cancelled = true;
     };
   }, [debounced, open, t, searchType]);
 
-  // Manga search (desktop only)
+  // Manga search (works everywhere via CORS proxies on the web)
   useEffect(() => {
-    if (!open || !desktop || !debounced.trim()) {
+    if (!open || !debounced.trim() || (searchType !== "all" && searchType !== "manga")) {
       setMangaResults([]);
       return;
     }
@@ -128,30 +156,34 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
     return () => {
       cancelled = true;
     };
-  }, [debounced, open, desktop, i18n.language]);
+  }, [debounced, open, searchType, i18n.language]);
 
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && !openManga && !readerState) onClose();
+      if (e.key === "Escape" && !openManga && !readerState && !openPerson) onClose();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, onClose, openManga, readerState]);
+  }, [open, onClose, openManga, readerState, openPerson]);
 
   if (!open) return null;
 
   const showEmptyHint = !debounced.trim();
-  const hasTmdb = results.length > 0;
+  const hasMedia = results.length > 0;
+  const hasPeople = people.length > 0;
   const hasManga = mangaResults.length > 0;
-  const noResults =
-    debounced.trim() &&
-    !loading &&
-    !mangaLoading &&
-    !error &&
-    !hasTmdb &&
-    !hasManga &&
-    (searchType === "manga" ? !desktop : true);
+
+  const hasResultsForType =
+    searchType === "all"
+      ? hasMedia || hasPeople || hasManga
+      : searchType === "person"
+        ? hasPeople
+        : searchType === "manga"
+          ? hasManga
+          : hasMedia;
+
+  const noResults = !!debounced.trim() && !loading && !mangaLoading && !error && !hasResultsForType;
 
   const handleSelect = (m: NormalizedMedia) => {
     pushRecent(query || m.title);
@@ -168,6 +200,19 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
     setOpenManga({ id: m.id, manga: m });
   };
 
+  const handlePersonSelect = (p: NormalizedPerson) => {
+    pushRecent(query || p.name);
+    setRecent(loadRecent());
+    setOpenPerson({
+      id: p.id,
+      name: p.name,
+      character: undefined,
+      profile_path: p.profilePath,
+      order: 0,
+      known_for_department: p.department || undefined,
+    });
+  };
+
   const handlePickRecent = (q: string) => {
     setQuery(q);
     inputRef.current?.focus();
@@ -178,14 +223,20 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
     setRecent([]);
   };
 
-  const showMangaToggle = desktop;
+  const typePills: Array<{ id: SearchType; label: string; icon: typeof Film }> = [
+    { id: "all", label: t("discover.all"), icon: Search },
+    { id: "movie", label: t("discover.movies"), icon: Film },
+    { id: "tv", label: t("discover.tvSeries"), icon: Tv },
+    { id: "person", label: t("search.actors"), icon: User },
+    { id: "manga", label: t("discover.manga"), icon: BookOpen },
+  ];
 
   return (
     <>
       <div
         className="fixed inset-0 z-50 flex items-start justify-center bg-black/70 px-4 pt-[10vh] animate-fade-in"
         onClick={() => {
-          if (!openManga && !readerState) onClose();
+          if (!openManga && !readerState && !openPerson) onClose();
         }}
       >
         <div
@@ -215,25 +266,26 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
             )}
           </div>
 
-          {/* Type toggle (desktop only) */}
-          {showMangaToggle && (
-            <div className="flex items-center gap-1.5 px-5 py-2">
-              {(["all", "manga"] as const).map((tp) => (
+          {/* Type pills */}
+          <div className="no-scrollbar flex items-center gap-1.5 overflow-x-auto border-b border-white/[0.06] px-4 py-2">
+            {typePills.map((tp) => {
+              const Icon = tp.icon;
+              return (
                 <button
-                  key={tp}
-                  onClick={() => setSearchType(tp)}
-                  className={`flex items-center gap-1.5 rounded-pill px-3 py-1.5 text-xs font-medium transition-all duration-ui ${
-                    searchType === tp
+                  key={tp.id}
+                  onClick={() => setSearchType(tp.id)}
+                  className={`flex shrink-0 items-center gap-1.5 rounded-pill px-3 py-1.5 text-xs font-medium transition-all duration-ui ${
+                    searchType === tp.id
                       ? "bg-accent text-accent-on"
                       : "text-shade-40 hover:text-on-primary"
                   }`}
                 >
-                  {tp === "manga" && <BookOpen className="h-3.5 w-3.5" />}
-                  {tp === "all" ? t("discover.all") : t("discover.manga")}
+                  <Icon className="h-3.5 w-3.5" />
+                  {tp.label}
                 </button>
-              ))}
-            </div>
-          )}
+              );
+            })}
+          </div>
 
           {/* Body */}
           <div className="max-h-[52vh] overflow-y-auto p-2">
@@ -319,10 +371,10 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
               </div>
             )}
 
-            {/* TMDB results */}
-            {searchType !== "manga" && results.length > 0 && (
+            {/* Movies & TV results */}
+            {hasMedia && (
               <div className="mb-1">
-                {searchType === "all" && hasManga && (
+                {searchType === "all" && (
                   <p className="eyebrow px-3 pt-2 pb-1">{t("discover.movies")} & {t("discover.tvSeries")}</p>
                 )}
                 {results.map((m, i) => (
@@ -357,11 +409,54 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
               </div>
             )}
 
-            {/* Manga results */}
-            {desktop && (searchType === "all" || searchType === "manga") && hasManga && (
+            {/* Actor results */}
+            {hasPeople && (
               <div className="mb-1">
                 {searchType === "all" && (
-                  <p className="eyebrow px-3 pt-2 pb-1 flex items-center gap-1.5">
+                  <p className="eyebrow flex items-center gap-1.5 px-3 pt-2 pb-1">
+                    <User className="h-3.5 w-3.5" /> {t("search.actors")}
+                  </p>
+                )}
+                {people.map((p, i) => (
+                  <button
+                    key={p.id}
+                    onClick={() => handlePersonSelect(p)}
+                    className="group flex w-full items-center gap-4 rounded-md px-3 py-2.5 text-left transition-all duration-200 hover:bg-white/[0.06] animate-fade-in-up"
+                    style={{ animationDelay: `${Math.min(i * 30, 300)}ms` }}
+                  >
+                    <div className="relative h-16 w-11 shrink-0 overflow-hidden rounded-md bg-white/[0.04]">
+                      {p.profilePath ? (
+                        <img
+                          src={profileUrl(p.profilePath) ?? ""}
+                          alt=""
+                          className="h-full w-full object-cover"
+                          referrerPolicy="no-referrer"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center text-shade-50">
+                          <User className="h-4 w-4" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-medium text-on-primary">{p.name}</p>
+                      <p className="mt-0.5 truncate text-xs text-shade-40">
+                        {p.department}
+                        {p.knownFor.length > 0 && (
+                          <span className="text-shade-50"> · {p.knownFor.join(", ")}</span>
+                        )}
+                      </p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Manga results */}
+            {hasManga && (searchType === "all" || searchType === "manga") && (
+              <div className="mb-1">
+                {searchType === "all" && (
+                  <p className="eyebrow flex items-center gap-1.5 px-3 pt-2 pb-1">
                     <BookOpen className="h-3.5 w-3.5" /> {t("discover.manga")}
                   </p>
                 )}
@@ -398,17 +493,14 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
                 ))}
               </div>
             )}
-
-            {/* Manga-only mode on web */}
-            {searchType === "manga" && !desktop && (
-              <div className="flex flex-col items-center gap-2 px-4 py-12 text-center">
-                <BookOpen className="h-8 w-8 text-shade-70" />
-                <p className="text-sm text-shade-40">{t("manga.desktopOnlyDesc")}</p>
-              </div>
-            )}
           </div>
         </div>
       </div>
+
+      {/* Actor profile modal */}
+      {openPerson && (
+        <ActorProfileModal person={openPerson} onClose={() => setOpenPerson(null)} />
+      )}
 
       {/* Manga details modal */}
       {openManga && (

@@ -12,14 +12,14 @@ Built with React + Vite + TypeScript + Tailwind CSS on the frontend and Rust (Ta
 
 ## Features
 
-- 🎥 **Browse & Discover** — featured hero carousel, "Now Playing" and "Upcoming" rows sourced from TMDB
-- 🏆 **Top 10** — trending titles ranked and shown in a dedicated row
-- 🔍 **Search** — live suggestions, trending terms, and recent searches
-- ⭐ **Watchlist** — save titles, mark watched, bulk clear with confirmation
-- 👥 **Watch Together** — create a room, share a deep link, and sync playback with peers over WebRTC (PeerJS / vidsync)
-- 🪟 **Native desktop shell** — Tauri window controls with true fullscreen (hides the taskbar)
-- 🌍 **i18n** — English, Hebrew, and Russian
-- 🎨 **Cinema design** — dark glassmorphic interface with a mint accent and spring easing
+- 🎥 **Browse & Discover** - featured hero carousel, "Now Playing" and "Upcoming" rows sourced from TMDB
+- 🏆 **Top 10** - trending titles ranked and shown in a dedicated row
+- 🔍 **Search** - live suggestions, trending terms, and recent searches
+- ⭐ **Watchlist** - save titles, mark watched, bulk clear with confirmation
+- 👥 **Watch Together** - create a room, share a deep link, and sync playback with peers over WebRTC (PeerJS / vidsync)
+- 🪟 **Native desktop shell** - Tauri window controls with true fullscreen (hides the taskbar)
+- 🌍 **i18n** - English, Hebrew, and Russian
+- 🎨 **Cinema design** - dark glassmorphic interface with a mint accent and spring easing
 
 ---
 
@@ -41,7 +41,7 @@ Built with React + Vite + TypeScript + Tailwind CSS on the frontend and Rust (Ta
 
 - **Node.js** 18+ (npm)
 - **Rust** toolchain (rustc **1.77.2+**) with `cargo`
-- **Tauri 2** prerequisite system tools for your OS — see the [Tauri prerequisites](https://v2.tauri.app/start/prerequisites/):
+- **Tauri 2** prerequisite system tools for your OS - see the [Tauri prerequisites](https://v2.tauri.app/start/prerequisites/):
   - **Windows**: Microsoft C++ Build Tools, WebView2
   - **Linux**: WebKitGTK, libappindicator, librsvg
 
@@ -98,9 +98,9 @@ npm run release      # bump version + build (patch/minor/major variants availabl
 
 ## How It Works
 
-- **Frontend** (`src/`) — React components, hooks, providers, and i18n locales (`en`, `he`, `ru`).
-- **Rust backend** (`src-tauri/`) — Tauri shell providing local persistence, a TMDB proxy, and a media/embed blocker bridge.
-- **Watch Together** (`src/lib/watchTogether.ts`, `src/hooks/useWatchTogether.ts`) — WebRTC peer connection for synced playback via room deep links (`#/watch?room=...`).
+- **Frontend** (`src/`) - React components, hooks, providers, and i18n locales (`en`, `he`, `ru`).
+- **Rust backend** (`src-tauri/`) - Tauri shell providing local persistence, a TMDB proxy, and a media/embed blocker bridge.
+- **Watch Together** (`src/lib/watchTogether.ts`, `src/hooks/useWatchTogether.ts`) - WebRTC peer connection for synced playback via room deep links (`#/watch?room=...`).
 
 ---
 

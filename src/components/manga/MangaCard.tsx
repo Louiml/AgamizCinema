@@ -17,7 +17,7 @@ export function MangaCard({ manga, index = 0, onOpen }: MangaCardProps) {
   const { t } = useTranslation();
   const [loaded, setLoaded] = useState(false);
   const { getProgress, isFinished, isFavorite, toggleFavorite } = useMangaLibrary();
-  const year = manga.year ?? "—";
+  const year = manga.year ?? "-";
   const suggestive = manga.contentRating === "suggestive";
   const progress = getProgress(manga.id);
   const finished = isFinished(manga.id);

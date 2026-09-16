@@ -196,7 +196,7 @@ export function FilterSheet<T extends string>({
                 }}
                 className="input-glass w-full"
               />
-              <span className="shrink-0 text-shade-50">—</span>
+              <span className="shrink-0 text-shade-50">-</span>
               <input
                 type="number"
                 inputMode="numeric"

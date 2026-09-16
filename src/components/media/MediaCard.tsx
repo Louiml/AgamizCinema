@@ -43,7 +43,7 @@ export function MediaCard({
   const isLight = useIsLight();
 
   const saved = has(media.id, media.mediaType);
-  const year = media.releaseDate?.slice(0, 4) ?? "—";
+  const year = media.releaseDate?.slice(0, 4) ?? "-";
   const isTV = media.mediaType === "tv";
 
   const handlePlay = () => {
@@ -135,7 +135,7 @@ export function MediaCard({
                 e.stopPropagation();
                 handlePlay();
               }}
-              aria-label={`${t("home.watchNow")} — ${media.title}`}
+              aria-label={`${t("home.watchNow")} - ${media.title}`}
               className="flex h-14 w-14 items-center justify-center rounded-pill bg-accent text-accent-on transition-transform duration-ui ease-spring hover:scale-110 active:scale-95 active:duration-press"
             >
               <Play className="h-6 w-6 translate-x-0.5" fill="currentColor" />

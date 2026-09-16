@@ -41,7 +41,7 @@ export function MobileHeader({ navigate, canvas }: MobileHeaderProps) {
           <button
             onClick={() => navigate("home")}
             className="group flex min-w-0 flex-1 items-center gap-2.5 text-start"
-            aria-label="Agamiz Cinema — Home"
+            aria-label="Agamiz Cinema - Home"
           >
             <span
               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent/10 transition-transform duration-300 group-hover:scale-105"
