@@ -1,7 +1,7 @@
 {
   "name": "agamiz-cinema",
   "private": true,
-  "version": "2.0.0",
+  "version": "3.0.0",
   "type": "module",
   "description": "Agamiz Cinema - a modern, glassmorphic streaming web app. React + Vite + TypeScript + Tailwind + Rust (Tauri).",
   "scripts": {
