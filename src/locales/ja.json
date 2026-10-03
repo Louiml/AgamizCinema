@@ -194,6 +194,12 @@
   "settings": {
     "title": "設定",
     "subtitle": "再生、データ、見た目をカスタマイズ。",
+    "uiDesign": "インターフェースデザイン",
+    "uiDesignDesc": "クラシックなデザインと、Netflix をモチーフにした新デザインから選べます。",
+    "uiDesignOld": "旧デザイン",
+    "uiDesignNew": "新デザイン",
+    "uiDesignFixedNote": "新デザインはダークモード固定で、赤いアクセントを使用します。ライトモード、アクセントテーマ、ガラス質感は旧デザインに適用されます。",
+    "beta": "ベータ",
     "preferences": "基本設定",
     "autoplay": "自動再生",
     "autoplayDesc": "次のタイトルを自動で開始。",

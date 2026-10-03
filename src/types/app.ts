@@ -47,12 +47,20 @@ export type VideoSource =
 export type AppTheme = "noir" | "mint" | "rose" | "amber" | "violet" | "azure";
 export type ThemeMode = "dark" | "light";
 
+/**
+ * Which UI skin to render.
+ * - "classic" — the original glassy/monochrome design.
+ * - "netflix" — the Netflix-inspired redesign (dark-only, fixed red accent).
+ */
+export type UiDesign = "classic" | "netflix";
+
 export interface AppSettings {
   autoplay: boolean;
   defaultSource: VideoSource;
   glassOpacity: "off" | "light" | "medium" | "heavy";
   theme: AppTheme;
   themeMode: ThemeMode;
+  uiDesign: UiDesign;
   mangaReaderMode: "scroll" | "paged";
   mangaReadingDirection: "rtl" | "ltr";
   blockPopups: boolean;
@@ -68,6 +76,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   glassOpacity: "off",
   theme: "noir",
   themeMode: "dark",
+  uiDesign: "classic",
   mangaReaderMode: "scroll",
   mangaReadingDirection: "rtl",
   blockPopups: true,

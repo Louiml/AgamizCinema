@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import "./i18n";
 import App from "./App";
 import "./index.css";
+import "./netflix.css";
 import "flag-icons/css/flag-icons.min.css";
 
 // NOTE: no frontend popup guard - patching window.open in the app frame only

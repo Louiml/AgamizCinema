@@ -194,6 +194,12 @@
   "settings": {
     "title": "Settings",
     "subtitle": "Playback, your data, and how the app looks.",
+    "uiDesign": "Interface Design",
+    "uiDesignDesc": "Choose between the classic look and the Netflix-inspired redesign.",
+    "uiDesignOld": "Old Design",
+    "uiDesignNew": "New Design",
+    "uiDesignFixedNote": "New Design is dark-only and uses a fixed red accent. Light mode, accent themes and frosted glass apply to Old Design.",
+    "beta": "Beta",
     "preferences": "Preferences",
     "autoplay": "Autoplay",
     "autoplayDesc": "Auto-start the next title when available.",

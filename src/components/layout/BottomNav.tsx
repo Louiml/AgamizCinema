@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
-import { Home, Compass, Bookmark, Settings } from "lucide-react";
 import { useWatchlist } from "@/providers/WatchlistProvider";
+import { NAV_ITEMS } from "@/components/layout/navItems";
 import type { Route } from "@/router/useHashRoute";
 import type { Canvas } from "@/router/useHashRoute";
 
@@ -10,16 +10,10 @@ interface BottomNavProps {
   canvas: Canvas;
 }
 
-const TABS: Array<{ id: Route; labelKey: string; icon: typeof Home }> = [
-  { id: "home", labelKey: "nav.home", icon: Home },
-  { id: "discover", labelKey: "nav.discover", icon: Compass },
-  { id: "watchlist", labelKey: "nav.watchlist", icon: Bookmark },
-  { id: "settings", labelKey: "nav.settings", icon: Settings },
-];
-
 /**
  * Floating glass bottom navigation shown only on mobile.
  * Thumb-friendly targets, spring-animated active state.
+ * The Netflix skin uses NetflixBottomNav instead.
  */
 export function BottomNav({ route, navigate, canvas }: BottomNavProps) {
   const { t } = useTranslation();
@@ -35,7 +29,7 @@ export function BottomNav({ route, navigate, canvas }: BottomNavProps) {
           : "border border-white/[0.08] bg-canvas-night"
       }`}
     >
-      {TABS.map((tab) => {
+      {NAV_ITEMS.map((tab) => {
         const active = route === tab.id;
         const Icon = tab.icon;
         return (

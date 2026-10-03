@@ -194,6 +194,12 @@
   "settings": {
     "title": "Einstellungen",
     "subtitle": "Wiedergabe, deine Daten und das Aussehen der App.",
+    "uiDesign": "Oberflächendesign",
+    "uiDesignDesc": "Wähle zwischen dem klassischen Design und dem Netflix-inspirierten Redesign.",
+    "uiDesignOld": "Altes Design",
+    "uiDesignNew": "Neues Design",
+    "uiDesignFixedNote": "Das neue Design ist nur im dunklen Modus verfügbar und nutzt einen festen roten Akzent. Heller Modus, Akzentthemen und Milchglas gelten für das alte Design.",
+    "beta": "Beta",
     "preferences": "Einstellungen",
     "autoplay": "Autoplay",
     "autoplayDesc": "Den nächsten Titel automatisch starten, wenn verfügbar.",

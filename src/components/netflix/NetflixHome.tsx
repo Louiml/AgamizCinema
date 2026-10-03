@@ -1,20 +1,17 @@
 import { useTranslation } from "react-i18next";
-import {
-  TrendingUp,
-  Flame,
-  Sparkles,
-  History,
-  PlayCircle,
-  Clapperboard,
-  CalendarClock,
-} from "lucide-react";
 import { useHomeFeed } from "@/hooks/useHomeFeed";
-import { HeroCarousel } from "@/components/home/HeroCarousel";
-import { TopTenRow } from "@/components/home/TopTenRow";
-import { MediaRow } from "@/components/media/MediaRow";
 import { PageLoader } from "@/components/ui/Spinner";
+import { NetflixHero } from "./NetflixHero";
+import { NetflixRow } from "./NetflixRow";
+import { NetflixTopTenRow } from "./NetflixTopTenRow";
 
-export function HomePage() {
+/**
+ * Netflix home: one hero, then a stack of rails.
+ *
+ * Reads the exact same feed as the classic HomePage via useHomeFeed, so the
+ * two designs never drift apart on data.
+ */
+export function NetflixHome() {
   const { t } = useTranslation();
   const feed = useHomeFeed();
 
@@ -43,78 +40,72 @@ export function HomePage() {
   } = feed;
 
   return (
-    <div className="space-y-16 pb-10">
+    <div className="space-y-10 pb-10">
       {trending && trending.length > 0 && (
-        <HeroCarousel items={trending} genreMap={genreMap ?? undefined} />
+        <NetflixHero items={trending} genreMap={genreMap ?? undefined} />
       )}
 
       {continueCount > 0 && (
-        <MediaRow
+        <NetflixRow
           title={t("home.continueWatching")}
           subtitle={t("home.continueWatchingSubtitle")}
-          icon={<History className="h-5 w-5" />}
           media={continueEnriched}
+          size="landscape"
           progressMap={continueProgressMap}
           loading={continueEnriched.length !== continueCount}
         />
       )}
 
-      <MediaRow
+      <NetflixRow
         title={t("home.trendingToday")}
         subtitle={t("home.trendingTodaySubtitle")}
-        icon={<Flame className="h-5 w-5" />}
         media={trending ?? []}
         loading={trendingLoading}
       />
 
       {trending && trending.length >= 10 && (
-        <TopTenRow
+        <NetflixTopTenRow
           title={t("home.top10")}
           subtitle={t("home.top10Subtitle")}
           media={trending}
         />
       )}
 
-      <MediaRow
+      <NetflixRow
         title={t("home.popularMovies")}
         subtitle={t("home.popularMoviesSubtitle")}
-        icon={<TrendingUp className="h-5 w-5" />}
         media={popularMovies ?? []}
         loading={popularMoviesLoading}
       />
 
-      <MediaRow
+      <NetflixRow
         title={t("home.popularSeries")}
         subtitle={t("home.popularSeriesSubtitle")}
-        icon={<PlayCircle className="h-5 w-5" />}
         media={popularTV ?? []}
         loading={popularTVLoading}
       />
 
-      <MediaRow
+      <NetflixRow
         title={t("home.nowPlaying")}
         subtitle={t("home.nowPlayingSubtitle")}
-        icon={<Clapperboard className="h-5 w-5" />}
         media={nowPlaying ?? []}
         loading={nowPlayingLoading}
       />
 
-      <MediaRow
+      <NetflixRow
         title={t("home.upcoming")}
         subtitle={t("home.upcomingSubtitle")}
-        icon={<CalendarClock className="h-5 w-5" />}
         media={upcoming ?? []}
         loading={upcomingLoading}
       />
 
-      <MediaRow
+      <NetflixRow
         title={t("home.basedOnSeen")}
         subtitle={
           recSeedTitle
             ? t("home.becauseYouWatched", { title: recSeedTitle })
             : t("home.tasteIntro")
         }
-        icon={<Sparkles className="h-5 w-5" />}
         media={recommendations ?? []}
         loading={recLoading}
       />

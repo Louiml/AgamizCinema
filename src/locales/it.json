@@ -194,6 +194,12 @@
   "settings": {
     "title": "Impostazioni",
     "subtitle": "Riproduzione, i tuoi dati e l'aspetto dell'app.",
+    "uiDesign": "Design dell'interfaccia",
+    "uiDesignDesc": "Scegli tra il design classico e il redesign ispirato a Netflix.",
+    "uiDesignOld": "Design precedente",
+    "uiDesignNew": "Nuovo design",
+    "uiDesignFixedNote": "Il nuovo design è disponibile solo in modalità scura e usa un accento rosso fisso. Modalità chiara, temi d'accento e vetro smerigliato si applicano al design precedente.",
+    "beta": "Beta",
     "preferences": "Preferenze",
     "autoplay": "Riproduzione automatica",
     "autoplayDesc": "Avvia automaticamente il titolo successivo quando disponibile.",

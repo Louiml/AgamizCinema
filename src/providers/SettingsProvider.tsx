@@ -13,6 +13,7 @@ import {
   DEFAULT_SETTINGS,
   STORAGE_KEYS,
   type AppSettings,
+  type UiDesign,
 } from "@/types/app";
 
 interface SettingsContextValue {
@@ -70,7 +71,27 @@ export function useSettings(): SettingsContextValue {
   return ctx;
 }
 
-/** Whether the app is currently in light mode (global Light/Dark setting). */
+/**
+ * Which UI skin is active. "classic" is the original design, "netflix" is the
+ * Netflix-inspired redesign.
+ */
+export function useDesign(): UiDesign {
+  return useSettings().settings.uiDesign;
+}
+
+/** Shorthand for `useDesign() === "netflix"`. */
+export function useIsNetflix(): boolean {
+  return useSettings().settings.uiDesign === "netflix";
+}
+
+/**
+ * Whether the app is currently in light mode.
+ *
+ * The Netflix design is dark-only, so it always reports false — that keeps every
+ * existing `useIsLight()` consumer correct without touching a single component.
+ */
 export function useIsLight(): boolean {
-  return useSettings().settings.themeMode === "light";
+  const { settings } = useSettings();
+  if (settings.uiDesign === "netflix") return false;
+  return settings.themeMode === "light";
 }

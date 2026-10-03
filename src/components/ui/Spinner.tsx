@@ -35,14 +35,20 @@ export function PageLoader({ label = "Loading" }: { label?: string }) {
   );
 }
 
-export function SkeletonCard() {
+/**
+ * Poster placeholder. Pass `bare` for rails whose cards have no caption block
+ * (the Netflix design) so the skeleton matches the real card's height.
+ */
+export function SkeletonCard({ bare = false }: { bare?: boolean }) {
   return (
     <div className="surface-dark animate-pulse overflow-hidden rounded-lg">
       <div className="aspect-[2/3] bg-white/[0.04]" />
-      <div className="space-y-2 p-3">
-        <div className="h-3 w-3/4 rounded bg-white/10" />
-        <div className="h-2.5 w-1/2 rounded bg-white/[0.06]" />
-      </div>
+      {!bare && (
+        <div className="space-y-2 p-3">
+          <div className="h-3 w-3/4 rounded bg-white/10" />
+          <div className="h-2.5 w-1/2 rounded bg-white/[0.06]" />
+        </div>
+      )}
     </div>
   );
 }

@@ -1,22 +1,16 @@
-import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Home,
-  Compass,
-  Bookmark,
-  Settings,
-  Search,
-  Minus,
-  Maximize,
-  Minimize,
-  X,
-} from "lucide-react";
+import { Search, Minus, Maximize, Minimize, X } from "lucide-react";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import {
+  useWindowControls,
+  useScrolled,
+  useSearchHotkey,
+} from "@/hooks/useChrome";
 import { useWatchlist } from "@/providers/WatchlistProvider";
 import { SearchModal } from "@/components/search/SearchModal";
 import { LanguageSelector } from "@/components/ui/LanguageSelector";
-import { isTauri } from "@/services/tauri";
 import { ExternalLinks } from "@/components/ui/ExternalLinks";
+import { NAV_ITEMS } from "@/components/layout/navItems";
 import type { Route, Canvas } from "@/router/useHashRoute";
 import { Logo } from "@/components/ui/Logo";
 
@@ -26,121 +20,18 @@ interface TitleBarProps {
   canvas: Canvas;
 }
 
-const NAV_ITEMS: Array<{ id: Route; labelKey: string; icon: typeof Home }> = [
-  { id: "home", labelKey: "nav.home", icon: Home },
-  { id: "discover", labelKey: "nav.discover", icon: Compass },
-  { id: "watchlist", labelKey: "nav.watchlist", icon: Bookmark },
-  { id: "settings", labelKey: "nav.settings", icon: Settings },
-];
-
-function useWindowControls() {
-  const [available, setAvailable] = useState(false);
-  const [isMaximized, setIsMaximized] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-
-  useEffect(() => {
-    if (!isTauri()) return;
-    let cancelled = false;
-    const unlisten: Array<() => void> = [];
-
-    void (async () => {
-      const { getCurrentWindow } = await import("@tauri-apps/api/window");
-      if (cancelled) return;
-      const win = getCurrentWindow();
-      setAvailable(true);
-
-      const refresh = async () => {
-        if (cancelled) return;
-        try {
-          setIsMaximized(await win.isMaximized());
-          setIsFullscreen(await win.isFullscreen());
-        } catch {
-          /* ignore */
-        }
-      };
-      void refresh();
-
-      try {
-        unlisten.push(await win.onResized(() => void refresh()));
-      } catch {
-        /* ignore */
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-      unlisten.forEach((u) => u());
-    };
-  }, []);
-
-  const minimize = async () => {
-    const { getCurrentWindow } = await import("@tauri-apps/api/window");
-    await getCurrentWindow().minimize();
-  };
-  const toggleFullscreen = async () => {
-    const { getCurrentWindow } = await import("@tauri-apps/api/window");
-    const win = getCurrentWindow();
-    const next = !(await win.isFullscreen().catch(() => false));
-    await win.setFullscreen(next);
-    setIsFullscreen(next);
-  };
-  const close = async () => {
-    const { getCurrentWindow } = await import("@tauri-apps/api/window");
-    await getCurrentWindow().close();
-  };
-
-  return { available, isMaximized, isFullscreen, minimize, toggleFullscreen, close };
-}
-
-function useScrolled() {
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  return scrolled;
-}
-
+/**
+ * Classic desktop chrome: opaque top bar with a centred segmented-pill nav.
+ * The Netflix skin uses NetflixTitleBar instead.
+ */
 export function TitleBar({ route, navigate, canvas }: TitleBarProps) {
   const { t } = useTranslation();
   const { count } = useWatchlist();
   const isMobile = useIsMobile();
-  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useSearchHotkey();
   const windowCtl = useWindowControls();
   const scrolled = useScrolled();
   const isLight = canvas === "cream";
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement | null;
-      const typing =
-        target?.tagName === "INPUT" ||
-        target?.tagName === "TEXTAREA" ||
-        target?.isContentEditable;
-
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        setSearchOpen((v) => !v);
-        return;
-      }
-      if (
-        e.key === "/" &&
-        !typing &&
-        !e.metaKey &&
-        !e.ctrlKey &&
-        !e.altKey
-      ) {
-        e.preventDefault();
-        setSearchOpen(true);
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
 
   if (isMobile) return null;
 
@@ -165,9 +56,7 @@ export function TitleBar({ route, navigate, canvas }: TitleBarProps) {
             className="group flex shrink-0 items-center gap-2.5"
             aria-label="Agamiz Cinema - Home"
           >
-            <span
-              className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent/10 transition-transform duration-ui ease-spring group-hover:scale-105 group-active:scale-95"
-            >
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent/10 transition-transform duration-ui ease-spring group-hover:scale-105 group-active:scale-95">
               <Logo className="h-7 w-7 text-accent" />
             </span>
             <span
@@ -251,22 +140,16 @@ export function TitleBar({ route, navigate, canvas }: TitleBarProps) {
                 <button
                   onClick={() => void windowCtl.minimize()}
                   aria-label="Minimize window"
-                  className={`flex h-8 w-9 items-center justify-center rounded-xs transition-all duration-press active:scale-95 ${
-                    isLight
-                      ? "text-shade-60 hover:bg-shade-30 hover:text-ink"
-                      : "text-shade-40 hover:bg-white/10 hover:text-on-primary"
-                  }`}
+                  className="flex h-8 w-9 items-center justify-center rounded-xs text-shade-40 transition-all duration-press hover:bg-white/10 hover:text-on-primary active:scale-95"
                 >
                   <Minus className="h-4 w-4" />
                 </button>
                 <button
                   onClick={() => void windowCtl.toggleFullscreen()}
-                  aria-label={windowCtl.isFullscreen ? "Exit full screen" : "Enter full screen"}
-                  className={`flex h-8 w-9 items-center justify-center rounded-xs transition-all duration-press active:scale-95 ${
-                    isLight
-                      ? "text-shade-60 hover:bg-shade-30 hover:text-ink"
-                      : "text-shade-40 hover:bg-white/10 hover:text-on-primary"
-                  }`}
+                  aria-label={
+                    windowCtl.isFullscreen ? "Exit full screen" : "Enter full screen"
+                  }
+                  className="flex h-8 w-9 items-center justify-center rounded-xs text-shade-40 transition-all duration-press hover:bg-white/10 hover:text-on-primary active:scale-95"
                 >
                   {windowCtl.isFullscreen ? (
                     <Minimize className="h-3.5 w-3.5" />

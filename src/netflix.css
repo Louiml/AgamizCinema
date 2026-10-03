@@ -1,0 +1,292 @@
+/* ════════════════════════════════════════════════════════════════════════
+   Agamiz Cinema — "New Design (Beta)" / Netflix skin.
+
+   Loaded after index.css so every rule here overrides the classic design.
+   Two jobs:
+     1. Re-point the shared design tokens (bottom of file) — this is what makes
+        every Tailwind colour utility in the app re-theme for free.
+     2. Re-skin the shared primitives (surface/button/chip/input classes) so
+        components we do NOT fork — modals, player, manga reader, settings,
+        selects, toggles, toasts, empty states — still read as Netflix.
+
+   The structurally-different pieces (nav, hero, rows, hover-expand cards) live
+   in src/components/netflix/ and consume the `.nf-*` helpers at the bottom.
+
+   Active only while <html data-design="netflix">. Dark-only: the shell pins
+   data-canvas="night" and data-glass="off" while this design is selected.
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Surfaces ───────────────────────────────────────────────────────
+   Flat #181818, hairline border, 2px corners, no blur, no soft shadow. */
+[data-design="netflix"] .surface-dark,
+[data-design="netflix"] .surface-light,
+[data-design="netflix"] .glass-panel,
+[data-design="netflix"] .glass-card,
+[data-design="netflix"] .glass-mint {
+  background-color: rgb(var(--canvas-elev));
+  border: 1px solid rgb(var(--hairline));
+  border-radius: 2px;
+  box-shadow: none;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+[data-design="netflix"] .glass-card:hover {
+  background-color: rgb(var(--canvas-elev));
+  border-color: rgb(var(--hairline));
+  box-shadow: none;
+}
+[data-design="netflix"] .glass-chrome {
+  background-color: rgb(var(--canvas));
+  border-bottom: 1px solid rgb(var(--hairline));
+  border-radius: 0;
+}
+
+/* ── 2. Flat, square controls ────────────────────────────────────────── */
+[data-design="netflix"] .chip,
+[data-design="netflix"] .chip-light,
+[data-design="netflix"] .btn-primary-pill,
+[data-design="netflix"] .btn-outline-on-dark,
+[data-design="netflix"] .btn-outline-on-light,
+[data-design="netflix"] .btn-aloe-pill,
+[data-design="netflix"] .btn-mint,
+[data-design="netflix"] .btn-glass,
+[data-design="netflix"] .pill-tag-aloe,
+[data-design="netflix"] .pill-tag-shade,
+[data-design="netflix"] .pill-tag-shade-dark,
+[data-design="netflix"] .input-glass,
+[data-design="netflix"] .input-light {
+  border-radius: 2px;
+}
+
+/* Netflix has no press-down bounce. Kill the scale the classic buttons do. */
+[data-design="netflix"] .btn-primary-pill:active,
+[data-design="netflix"] .btn-mint:active,
+[data-design="netflix"] .btn-aloe-pill:active,
+[data-design="netflix"] .btn-outline-on-dark:active,
+[data-design="netflix"] .btn-outline-on-light:active,
+[data-design="netflix"] .chip:active,
+[data-design="netflix"] .chip-light:active {
+  transform: none;
+}
+
+/* Header icon buttons are bare — no pill, no border. */
+[data-design="netflix"] .btn-icon {
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: 2px;
+}
+[data-design="netflix"] .btn-icon:hover {
+  background-color: rgb(var(--surface-elev) / 0.6);
+  border-color: transparent;
+}
+
+/* Chips: flat grey, red only when selected. */
+[data-design="netflix"] .chip,
+[data-design="netflix"] .chip-light {
+  background-color: rgb(var(--surface-elev));
+  border: 1px solid transparent;
+  color: rgb(var(--text) / 0.75);
+}
+[data-design="netflix"] .chip:hover,
+[data-design="netflix"] .chip-light:hover {
+  background-color: rgb(var(--surface-elev));
+  border-color: transparent;
+  color: rgb(var(--text));
+}
+[data-design="netflix"] .chip.chip-active,
+[data-design="netflix"] .chip-light.chip-active,
+[data-design="netflix"] .chip.chip-active:hover,
+[data-design="netflix"] .chip-light.chip-active:hover {
+  background-color: rgb(var(--accent));
+  border-color: rgb(var(--accent));
+  color: rgb(var(--accent-on));
+  filter: none;
+}
+
+/* Steeper poster scrim than the classic gradient. */
+[data-design="netflix"] .card-overlay {
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.95) 0%,
+    rgba(0, 0, 0, 0.5) 55%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
+/* Inputs sit on #303030 with a visible edge, like Netflix's search field. */
+[data-design="netflix"] .input-glass,
+[data-design="netflix"] .input-light {
+  background-color: rgb(var(--surface-elev));
+  border: 1px solid rgb(var(--hairline));
+}
+[data-design="netflix"] .input-glass:focus,
+[data-design="netflix"] .input-light:focus {
+  background-color: rgb(var(--surface-elev));
+  border-color: rgb(var(--text) / 0.6);
+}
+
+/* ── 3. Muted text ───────────────────────────────────────────────────────
+   The shade-* ramp is hardcoded hex and therefore mode-blind (a known weak
+   spot in the classic light mode). Remap it to Netflix's grey scale. */
+[data-design="netflix"] .text-shade-30 {
+  color: #e5e5e5;
+}
+[data-design="netflix"] .text-shade-40 {
+  color: #b3b3b3;
+}
+[data-design="netflix"] .text-shade-50 {
+  color: #b3b3b3;
+}
+[data-design="netflix"] .text-shade-60 {
+  color: #8c8c8c;
+}
+[data-design="netflix"] .text-shade-70 {
+  color: #6a6a6a;
+}
+[data-design="netflix"] .eyebrow {
+  color: #b3b3b3;
+}
+
+/* ── 4. Layout primitives used by src/components/netflix/* ────────────── */
+
+/* Poster rail. Rows run edge-to-edge; the caller adds the side padding. */
+.nf-track {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.nf-track::-webkit-scrollbar {
+  display: none;
+}
+
+/* Poster in a rail. Inert on hover: the expansion is a viewport-level overlay
+   (NetflixExpandedCard, portalled to <body>) because a panel nested in here
+   would be clipped by the rail's scroll container. */
+.nf-card {
+  position: relative;
+  background-color: rgb(var(--canvas-elev));
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgb(var(--hairline));
+  transition: box-shadow var(--dur-ui) cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Detail panel of the expanded card. Positioned by inline styles against the
+   scaled poster; `shrink-0` on the buttons stops flex from squashing them
+   inside a narrow rail. */
+.nf-expanded-panel {
+  position: absolute;
+  z-index: 20;
+  padding: 0.75rem;
+  border-radius: 0 0 2px 2px;
+  background-color: rgb(var(--canvas-elev));
+  box-shadow:
+    0 0 0 1px rgb(var(--hairline)),
+    0 14px 32px rgba(0, 0, 0, 0.7);
+}
+.nf-expanded-panel--above {
+  border-radius: 2px 2px 0 0;
+  box-shadow:
+    0 0 0 1px rgb(var(--hairline)),
+    0 -14px 32px rgba(0, 0, 0, 0.7);
+}
+
+.nf-exp-btn {
+  display: inline-flex;
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background-color: rgb(var(--surface-elev));
+  color: rgb(var(--text));
+  transition: background-color var(--dur-ui) cubic-bezier(0.4, 0, 0.2, 1);
+}
+.nf-exp-btn:hover {
+  background-color: rgb(var(--hairline));
+}
+.nf-exp-btn--play {
+  background-color: rgb(var(--contrast));
+  color: rgb(var(--on-contrast));
+}
+.nf-exp-btn--play:hover {
+  background-color: rgb(var(--contrast) / 0.85);
+}
+.nf-exp-btn--on {
+  background-color: rgb(var(--accent));
+  color: rgb(var(--accent-on));
+}
+
+/* Top-10 rank numeral: outlined, sitting behind the poster. */
+.nf-numeral {
+  font-weight: 800;
+  line-height: 0.78;
+  color: transparent;
+  -webkit-text-stroke: 2px rgb(var(--text) / 0.55);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Two-axis hero scrim: darkens the left third for the copy block and the
+   bottom edge so the hero melts into the page. */
+.nf-scrim {
+  background:
+    linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.85) 0%,
+      rgba(0, 0, 0, 0.55) 32%,
+      rgba(0, 0, 0, 0.12) 62%,
+      rgba(0, 0, 0, 0) 100%
+    ),
+    linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.92) 0%,
+      rgba(0, 0, 0, 0.45) 38%,
+      rgba(0, 0, 0, 0) 72%
+    );
+}
+
+/* Display type. Netflix headlines are heavy and tightly tracked. */
+.nf-title {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.nf-meta {
+  color: #b3b3b3;
+}
+
+/* ── 5. Tokens ───────────────────────────────────────────────────────────
+   Declared last so it beats every [data-theme] block in index.css. Re-points
+   the same --dk-* vars the semantic aliases resolve against, so the whole app
+   re-themes without a single component edit. Accent is fixed brand red and
+   the accent theme swatches are ignored while this design is active. */
+[data-design="netflix"] {
+  color-scheme: dark;
+
+  --dk-canvas: 20 20 20; /* #141414 page */
+  --dk-canvas-elev: 24 24 24; /* #181818 surface / modal */
+  --dk-text: 229 229 229; /* #e5e5e5 body copy */
+  --dk-surface: 48 48 48; /* #303030 raised */
+  --dk-hairline: 45 45 45; /* #2d2d2d divider / input */
+
+  --accent: 229 9 20; /* #E50914 */
+  --accent-on: 255 255 255;
+  --accent-soft: 39 39 39; /* #272727 inactive pill */
+  --accent-soft-on: 229 229 229;
+
+  /* Play button: solid white with a black label. */
+  --contrast: 255 255 255;
+  --on-contrast: 0 0 0;
+
+  /* Plain UI easing — Netflix has no spring or bounce. */
+  --ease-spring: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring-bounce: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-press: 80ms;
+  --dur-ui: 200ms;
+  --dur-surface: 300ms;
+}

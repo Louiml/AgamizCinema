@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#000000" />
+    <meta name="theme-color" content="#141414" />
     <meta
       name="description"
       content="Agamiz Cinema - a cinematic streaming experience. Discover, watch and keep track of the movies and series you love."
@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
@@ -38,15 +38,24 @@
   </head>
   <body>
     <script>
-      // Apply saved theme + mode before React mounts to avoid a flash.
+      // Apply saved design + theme + mode before React mounts to avoid a flash.
       (function () {
+        var d = document.documentElement;
+        d.dataset.design = "classic";
         try {
           var raw = localStorage.getItem("agamiz:settings");
           if (raw) {
             var s = JSON.parse(raw);
-            if (s.theme) document.documentElement.dataset.theme = s.theme;
-            document.documentElement.dataset.canvas =
-              s.themeMode === "light" ? "cream" : "night";
+            if (s.theme) d.dataset.theme = s.theme;
+            // "netflix" is dark-only with a fixed red accent and no glass, so
+            // pin the canvas/glass attributes regardless of the saved mode.
+            if (s.uiDesign === "netflix") {
+              d.dataset.design = "netflix";
+              d.dataset.canvas = "night";
+              d.dataset.glass = "off";
+            } else {
+              d.dataset.canvas = s.themeMode === "light" ? "cream" : "night";
+            }
           }
         } catch (e) {}
       })();

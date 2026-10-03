@@ -23,6 +23,9 @@ import {
   Moon,
   BookOpen,
   SlidersHorizontal,
+  Clapperboard,
+  LayoutTemplate,
+  Info,
   type LucideIcon,
 } from "lucide-react";
 import { useHistory } from "@/providers/HistoryProvider";
@@ -30,7 +33,7 @@ import { useWatchlist } from "@/providers/WatchlistProvider";
 import { useSettings } from "@/providers/SettingsProvider";
 import { usePlayer } from "@/providers/TMDBProvider";
 import { changeLanguage, type AppLanguage } from "@/i18n";
-import type { AppTheme } from "@/types/app";
+import type { AppTheme, UiDesign } from "@/types/app";
 import { GlassModal } from "@/components/ui/GlassModal";
 import { GlassSelect } from "@/components/ui/GlassSelect";
 import { Toggle } from "@/components/ui/Toggle";
@@ -47,7 +50,7 @@ import {
 } from "@/services/download";
 import type { HistoryItem, WatchlistItem } from "@/types/app";
 
-// ── helpers (unchanged) ──────────────────────────────────────
+// ?? helpers (unchanged) ??????????????????????????????????????
 
 interface BackupPayload {
   app?: string;
@@ -96,7 +99,7 @@ function sanitizeHistory(data: unknown): HistoryItem[] {
   }));
 }
 
-// ── sub-components ────────────────────────────────────────────
+// ?? sub-components ????????????????????????????????????????????
 
 function SectionHeader({ icon: Icon, title }: { icon: LucideIcon; title: string }) {
   return (
@@ -166,13 +169,14 @@ function HistoryCard({ item }: { item: HistoryItem }) {
   );
 }
 
-// ── main ─────────────────────────────────────────────────────
+// ?? main ?????????????????????????????????????????????????????
 
 export function SettingsPage() {
   const { t, i18n } = useTranslation();
   const { items: history, clear: clearHistory, remove: removeHistory, replace: replaceHistory } = useHistory();
   const { items: watchlistItems, count: watchlistCount, clear: clearWatchlist, replace: replaceWatchlist } = useWatchlist();
   const { settings, update } = useSettings();
+  const uiDesign = settings.uiDesign;
 
   const [confirmHistory, setConfirmHistory] = useState(false);
   const [confirmWatchlist, setConfirmWatchlist] = useState(false);
@@ -242,6 +246,10 @@ export function SettingsPage() {
     { value: "violet", label: t("settings.themeViolet"), swatch: "#7c3aed" },
     { value: "azure", label: t("settings.themeAzure"), swatch: "#0284c7" },
   ];
+  const designOptions: Array<{ value: UiDesign; label: string; icon: LucideIcon }> = [
+    { value: "classic", label: t("settings.uiDesignOld"), icon: LayoutTemplate },
+    { value: "netflix", label: t("settings.uiDesignNew"), icon: Clapperboard },
+  ];
 
   const LANGUAGES: Array<{ code: AppLanguage; codeLabel: string; country: string }> = [
     { code: "en", codeLabel: "EN", country: "gb" },
@@ -261,7 +269,7 @@ export function SettingsPage() {
         <p className="mt-1 text-sm text-shade-50">{t("settings.subtitle")}</p>
       </div>
 
-      {/* ── Playback ── */}
+      {/* ?? Playback ?? */}
       <section className="surface-dark space-y-3 rounded-lg p-5 animate-fade-in-up sm:p-6">
         <SectionHeader icon={PlayCircle} title={t("settings.preferences")} />
 
@@ -305,71 +313,114 @@ export function SettingsPage() {
         )}
       </section>
 
-      {/* ── Appearance ── */}
+      {/* ?? Appearance ?? */}
       <section className="surface-dark space-y-3 rounded-lg p-5 animate-fade-in-up sm:p-6" style={{ animationDelay: "60ms" }}>
         <SectionHeader icon={Palette} title={t("settings.theme")} />
 
-        {/* Theme swatches */}
-        <div className="flex flex-col gap-3 rounded-md border border-hairline-light bg-canvas-elevated/40 p-4">
-          <div>
-            <p className="flex items-center gap-2 text-sm font-medium text-on-primary">
-              <Palette className="h-4 w-4 text-accent" /> {t("settings.theme")}
-            </p>
-            <p className="mt-0.5 text-xs text-shade-50">{t("settings.themeDesc")}</p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {themes.map((theme) => {
-              const active = settings.theme === theme.value;
-              return (
-                <button key={theme.value} onClick={() => update({ theme: theme.value })} title={theme.label}
-                  className={`flex items-center gap-2 rounded-pill border px-3 py-1.5 text-sm font-medium transition-all duration-ui active:scale-[0.96] ${
-                    active ? "border-accent bg-accent text-accent-on" : "border-hairline-light bg-canvas-light text-shade-60 hover:text-on-primary"
-                  }`}>
-                  <span className="h-4 w-4 rounded-pill border border-black/10" style={{ backgroundColor: theme.swatch }} aria-hidden />
-                  {theme.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Light / Dark */}
-        <div className="flex flex-col gap-3 rounded-md border border-hairline-light bg-canvas-elevated/40 p-4">
-          <div>
-            <p className="flex items-center gap-2 text-sm font-medium text-on-primary">
-              {settings.themeMode === "light" ? <Sun className="h-4 w-4 text-accent" /> : <Moon className="h-4 w-4 text-accent" />}
-              {t("settings.themeMode")}
-            </p>
-            <p className="mt-0.5 text-xs text-shade-50">{t("settings.themeModeDesc")}</p>
-          </div>
-          <div className="flex gap-2">
-            {(["dark", "light"] as const).map((mode) => {
-              const active = settings.themeMode === mode;
-              const Icon = mode === "light" ? Sun : Moon;
-              return (
-                <button key={mode} onClick={() => update({ themeMode: mode })}
-                  className={`flex flex-1 items-center justify-center gap-2 rounded-md border px-3 py-2 text-sm font-medium transition-all duration-ui active:scale-[0.96] ${
-                    active ? "border-accent bg-accent text-accent-on" : "border-hairline-light bg-canvas-light text-shade-60 hover:text-on-primary"
-                  }`}>
-                  <Icon className="h-4 w-4" />
-                  {mode === "light" ? t("settings.modeLight") : t("settings.modeDark")}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Surface material */}
-        <SettingRow icon={SlidersHorizontal} title={t("settings.glassOpacity")} desc={t("settings.glassOpacityDesc")}>
+        {/* Interface design - Old Design vs New Design (Beta) */}
+        <SettingRow
+          icon={LayoutTemplate}
+          title={t("settings.uiDesign")}
+          desc={t("settings.uiDesignDesc")}
+        >
           <div className="flex gap-1.5">
-            {glassLevels.map((level) => (
-              <button key={level.value} onClick={() => update({ glassOpacity: level.value })}
-                className={`chip-light px-3 py-1.5 ${settings.glassOpacity === level.value ? "chip-active" : ""}`}>
-                {level.label}
-              </button>
-            ))}
+            {designOptions.map((option) => {
+              const active = settings.uiDesign === option.value;
+              const Icon = option.icon;
+              return (
+                <button
+                  key={option.value}
+                  onClick={() => update({ uiDesign: option.value })}
+                  aria-pressed={active}
+                  className={`flex items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium transition-all duration-ui active:scale-[0.96] ${
+                    active
+                      ? "border-accent bg-accent text-accent-on"
+                      : "border-hairline-light bg-canvas-light text-shade-60 hover:text-on-primary"
+                  }`}
+                >
+                  <Icon className="h-4 w-4" />
+                  {option.label}
+                  {option.value === "netflix" && (
+                    <span className="rounded-xs bg-accent/20 px-1.5 py-px text-[10px] font-semibold uppercase tracking-wide text-accent">
+                      {t("settings.beta")}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </SettingRow>
+
+        {uiDesign === "classic" ? (
+          <>
+            {/* Theme swatches */}
+            <div className="flex flex-col gap-3 rounded-md border border-hairline-light bg-canvas-elevated/40 p-4">
+              <div>
+                <p className="flex items-center gap-2 text-sm font-medium text-on-primary">
+                  <Palette className="h-4 w-4 text-accent" /> {t("settings.theme")}
+                </p>
+                <p className="mt-0.5 text-xs text-shade-50">{t("settings.themeDesc")}</p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {themes.map((theme) => {
+                  const active = settings.theme === theme.value;
+                  return (
+                    <button key={theme.value} onClick={() => update({ theme: theme.value })} title={theme.label}
+                      className={`flex items-center gap-2 rounded-pill border px-3 py-1.5 text-sm font-medium transition-all duration-ui active:scale-[0.96] ${
+                        active ? "border-accent bg-accent text-accent-on" : "border-hairline-light bg-canvas-light text-shade-60 hover:text-on-primary"
+                      }`}>
+                      <span className="h-4 w-4 rounded-pill border border-black/10" style={{ backgroundColor: theme.swatch }} aria-hidden />
+                      {theme.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+  
+            {/* Light / Dark */}
+            <div className="flex flex-col gap-3 rounded-md border border-hairline-light bg-canvas-elevated/40 p-4">
+              <div>
+                <p className="flex items-center gap-2 text-sm font-medium text-on-primary">
+                  {settings.themeMode === "light" ? <Sun className="h-4 w-4 text-accent" /> : <Moon className="h-4 w-4 text-accent" />}
+                  {t("settings.themeMode")}
+                </p>
+                <p className="mt-0.5 text-xs text-shade-50">{t("settings.themeModeDesc")}</p>
+              </div>
+              <div className="flex gap-2">
+                {(["dark", "light"] as const).map((mode) => {
+                  const active = settings.themeMode === mode;
+                  const Icon = mode === "light" ? Sun : Moon;
+                  return (
+                    <button key={mode} onClick={() => update({ themeMode: mode })}
+                      className={`flex flex-1 items-center justify-center gap-2 rounded-md border px-3 py-2 text-sm font-medium transition-all duration-ui active:scale-[0.96] ${
+                        active ? "border-accent bg-accent text-accent-on" : "border-hairline-light bg-canvas-light text-shade-60 hover:text-on-primary"
+                      }`}>
+                      <Icon className="h-4 w-4" />
+                      {mode === "light" ? t("settings.modeLight") : t("settings.modeDark")}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+  
+            {/* Surface material */}
+            <SettingRow icon={SlidersHorizontal} title={t("settings.glassOpacity")} desc={t("settings.glassOpacityDesc")}>
+              <div className="flex gap-1.5">
+                {glassLevels.map((level) => (
+                  <button key={level.value} onClick={() => update({ glassOpacity: level.value })}
+                    className={`chip-light px-3 py-1.5 ${settings.glassOpacity === level.value ? "chip-active" : ""}`}>
+                    {level.label}
+                  </button>
+                ))}
+              </div>
+            </SettingRow>
+          </>
+        ) : (
+          <p className="flex items-start gap-2 rounded-md border border-hairline-light bg-canvas-elevated/40 p-4 text-xs text-shade-50">
+            <Info className="h-4 w-4 shrink-0" />
+            {t("settings.uiDesignFixedNote")}
+          </p>
+        )}
 
         {/* Manga reader mode */}
         {isTauri() && (
@@ -400,7 +451,7 @@ export function SettingsPage() {
         )}
       </section>
 
-      {/* ── Language ── */}
+      {/* ?? Language ?? */}
       <section className="surface-dark space-y-3 rounded-lg p-5 animate-fade-in-up sm:p-6" style={{ animationDelay: "120ms" }}>
         <SectionHeader icon={Languages} title={t("settings.language")} />
         <div className="flex flex-col gap-3 rounded-md border border-hairline-light bg-canvas-elevated/40 p-4">
@@ -422,7 +473,7 @@ export function SettingsPage() {
         </div>
       </section>
 
-      {/* ── Downloads ── */}
+      {/* ?? Downloads ?? */}
       <section className="surface-dark space-y-3 rounded-lg p-5 animate-fade-in-up sm:p-6" style={{ animationDelay: "180ms" }}>
         <SectionHeader icon={HardDriveDownload} title={t("settings.downloads")} />
         {downloadSupported() ? (
@@ -456,7 +507,7 @@ export function SettingsPage() {
         )}
       </section>
 
-      {/* ── Backup & Restore ── */}
+      {/* ?? Backup & Restore ?? */}
       <section className="surface-dark space-y-3 rounded-lg p-5 animate-fade-in-up sm:p-6" style={{ animationDelay: "240ms" }}>
         <SectionHeader icon={DatabaseBackup} title={t("settings.backupRestore")} />
         <div className="flex flex-col gap-3 rounded-md border border-hairline-light bg-canvas-elevated/40 p-4">
@@ -475,7 +526,7 @@ export function SettingsPage() {
         </div>
       </section>
 
-      {/* ── Watch History ── */}
+      {/* ?? Watch History ?? */}
       <section className="space-y-3 animate-fade-in-up" style={{ animationDelay: "300ms" }}>
         <div className="flex items-center justify-between gap-3">
           <SectionHeader icon={History} title={t("settings.whatSeen")} />
@@ -506,7 +557,7 @@ export function SettingsPage() {
         )}
       </section>
 
-      {/* ── Watchlist ── */}
+      {/* ?? Watchlist ?? */}
       <section className="surface-dark flex flex-wrap items-center justify-between gap-4 rounded-lg p-5 animate-fade-in-up sm:p-6" style={{ animationDelay: "360ms" }}>
         <div className="flex items-center gap-3">
           <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent/15 text-accent">
